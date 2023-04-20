@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{DB251B29-AA50-4D17-9699-F00685A9A93F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WotlkClient</RootNamespace>
+    <AssemblyName>WotlkClient</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <IntermediateOutputPath>..\obj\</IntermediateOutputPath>
+    <BaseIntermediateOutputPath>..\obj\</BaseIntermediateOutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <IntermediateOutputPath>..\obj\</IntermediateOutputPath>
+    <BaseIntermediateOutputPath>..\obj\</BaseIntermediateOutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.84.0.0, Culture=neutral, PublicKeyToken=1b03e6acf1164f73">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Clients\LogonServerClient\LogonServer.Client.cs" />
+    <Compile Include="Clients\WorldServerClient\WorldServerClient.Player.cs" />
+    <Compile Include="Clients\WorldServerClient\WorldServerClient.Auth.cs" />
+    <Compile Include="Clients\WorldServerClient\WorldServerClient.Chat.cs" />
+    <Compile Include="Clients\WorldServerClient\WorldServerClient.Combat.cs" />
+    <Compile Include="Clients\WorldServerClient\WorldServerClient.cs" />
+    <Compile Include="Clients\WorldServerClient\WorldServerClient.Movement.cs" />
+    <Compile Include="Clients\WorldServerClient\WorldServerClient.Object.Class.cs" />
+    <Compile Include="Clients\WorldServerClient\WorldServerClient.Object.cs" />
+    <Compile Include="Clients\WorldServerClient\WorldServerClient.Others.cs" />
+    <Compile Include="Clients\WorldServerClient\WorldServerClient.Spells.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="Constants\Constants.Auth.cs" />
+    <Compile Include="Constants\Constants.Chat.cs" />
+    <Compile Include="Constants\Constants.Combat.cs" />
+    <Compile Include="Constants\Constants.Movement.cs" />
+    <Compile Include="Constants\Constants.Objects.cs" />
+    <Compile Include="Constants\Constants.OpCodes.cs" />
+    <Compile Include="Constants\Constants.Other.cs" />
+    <Compile Include="Constants\Constants.Realm.cs" />
+    <Compile Include="Constants\Constants.UpdateFields.cs" />
+    <Compile Include="Crypt\ARC4.cs" />
+    <Compile Include="Crypt\BigInteger.cs" />
+    <Compile Include="Crypt\KeyGenerator.cs" />
+    <Compile Include="Crypt\PacketCrypt.cs" />
+    <Compile Include="Crypt\RC4.cs" />
+    <Compile Include="Crypt\Sha1Hash.cs" />
+    <Compile Include="Crypt\Sha1Warden.cs" />
+    <Compile Include="Crypt\Srp6.cs" />
+    <Compile Include="Crypt\WoWCrypt.cs" />
+    <Compile Include="DBC\DBCReader.cs" />
+    <Compile Include="DBC\MapTable.cs" />
+    <Compile Include="Network\PacketHandling\PacketHandler.cs" />
+    <Compile Include="Network\PacketHandling\PacketHandlerAtribute.cs" />
+    <Compile Include="Network\PacketId.cs" />
+    <Compile Include="Network\PacketIn.cs" />
+    <Compile Include="Network\PacketLoop.cs" />
+    <Compile Include="Network\PacketOut.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shared\BlizChunkHeader.cs" />
+    <Compile Include="Shared\Compression.cs" />
+    <Compile Include="Shared\Coordinate.cs" />
+    <Compile Include="Shared\EntityId.cs" />
+    <Compile Include="Shared\UpdateMask.cs" />
+    <Compile Include="Shared\WoWGuid.cs" />
+    <Compile Include="Utils\Log.cs" />
+    <Compile Include="Utils\Time.cs" />
+    <Compile Include="World\CombatMgr.cs" />
+    <Compile Include="World\MovementMgr.cs" />
+    <Compile Include="World\ObjectMgr.cs" />
+    <Compile Include="World\TerrainManager.cs" />
+    <Compile Include="World\Terrain\ADTProcessor.cs" />
+    <Compile Include="World\Terrain\BlizChunkHeader.cs" />
+    <Compile Include="World\Terrain\Extensions.cs" />
+    <Compile Include="World\Terrain\MapTile.cs" />
+    <Compile Include="World\Terrain\Vect3D.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
