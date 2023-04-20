@@ -1,9 +1,15 @@
 # WotlkBot
-The WotlkBot shall be a possibilty to turn your charcater to become a bot and to join your party or raid.  
+The WotlkBot shall be a possibilty to turn your WoW (World of Warcraft) charcater to become a bot and to join your party or raid and fight together with you.  
 The user can create a Python script to control the bots behaviour.
 
 This software shall only be used for your own private server like AzerothCore to be able to go into dungeons and raids alone.
 It can also be used on other private servers, where botting is allowed. Maybe Solocraft could allow to use it, because they have also party-bots implemented.
+
+## Motivation
+I am playing Wow now since the first monsths. Since Blizzard has sold Wow to Activision, the retail version does not make much fun anymore, but the old version 3.3.5 Wrath of the Lich King was a very good extension. 10 man raids where posible. The dungeon finder has helped a lot to make many heroic dungeons every day. The talent-tree was in god shape. The Paladin, wich was my main char in Vanilla is now tanky since TBC. The frost deathnight could tank dual-whield, which was real fun.  
+
+I have started to alter AzerothCore (private server) to make characters botable, but failed in some cases. I found no chance to equip the right gear to a bot. Compiling the server took a long time and crashed often with heap memory allocation issues.
+Then I found the project (mClient) from Michał Kałużny and was able to make it running as a 3.3.5 compatible client.
 
 ## Features Ready
 - Login character
@@ -19,4 +25,4 @@ It can also be used on other private servers, where botting is allowed. Maybe So
 
 
 ## Base
-This project is based on https://github.com/justMaku/mClient
+This project is based on https://github.com/justMaku/mClient from Michał Kałużny.
