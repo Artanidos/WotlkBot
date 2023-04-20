@@ -23,6 +23,9 @@ I have started to alter AzerothCore (private server) to make characters botable,
  
 Then I found the project (mClient) from Michał Kałużny and was able to make it running as a 3.3.5 compatible client.
 
+## WoW-Killer
+Developing this library could also lead to the possibility to create a new MMORPG based on the protokoll from Wow, the AzerothCore on the server and a Client based on Unreal engine 5, Unity or Godot 4. 
+
 ## Features Ready
 - Login character
 - Invite bot into a group
