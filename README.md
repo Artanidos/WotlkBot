@@ -16,3 +16,7 @@ It can also be used on other private servers, where botting is allowed. Maybe So
 - Bot shall heal, dps or tank
 - Bot shall accept same quest as master
 - Bot shall roll for items and equip items
+
+
+## Base
+This project is based on https://github.com/justMaku/mClient
