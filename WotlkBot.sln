@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WotlkClient", "Client\Wotlk
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WotlkBot", "Bot\WotlkBot.csproj", "{71AA911F-6EFD-44CC-9555-AFB2CB9DFB6C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WotlkBotGui", "WotlkBotGui\WotlkBotGui.csproj", "{2849EB78-4D61-4A2B-B933-39AEEE350208}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WotlkBotGui", "Gui\WotlkBotGui.csproj", "{2849EB78-4D61-4A2B-B933-39AEEE350208}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
