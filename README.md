@@ -1,5 +1,5 @@
 # WotlkBot
-!(gui/screen.png)
+!(Gui/screen.png)
 The WotlkBot shall be a possibilty to turn your WoW (World of Warcraft) charcater to become a bot and to join your party or raid and fight together with you.  
 The user can create a Python script to control the bots behaviour.
 
