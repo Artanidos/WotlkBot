@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
-using static IronPython.Runtime.Profiler;
 
 namespace WotlkBotGui
 {
@@ -49,8 +48,8 @@ namespace WotlkBotGui
                 b.Run = true;
                 listBoxBots.Items.Add(b);
             }
-
-            listBoxBots.SelectedIndex = 0;
+            if(listBoxBots.Items.Count > 0)
+                listBoxBots.SelectedIndex = 0;
         }
 
         private void buttonAdd_Click(object sender, EventArgs e)

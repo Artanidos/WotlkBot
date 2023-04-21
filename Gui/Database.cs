@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Microsoft.Data.Sqlite;
+using SQLitePCL;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using MySql.Data.MySqlClient;
 using static IronPython.Modules._ast;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
@@ -27,18 +28,18 @@ namespace WotlkBotGui
 
     public class Database
     {
-        string cs = @"server=localhost;userid=bot;password=bot;database=bot";
+        //string cs = @"server=localhost;userid=bot;password=bot;database=bot";
+        string cs = "Data Source=database.db;";
 
         public void Init()
         {
-            using (var con = new MySqlConnection(cs))
+            SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_sqlite3());
+            using (var con = new SqliteConnection(cs))
             {
                 con.Open();
-                var cmd = new MySqlCommand();
-                cmd.Connection = con;
-
+                SqliteCommand cmd = con.CreateCommand();
                 cmd.CommandText = "CREATE TABLE IF NOT EXISTS bots (" +
-                    "id INTEGER PRIMARY KEY AUTO_INCREMENT, " +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "account_name TEXT, " +
                     "char_name TEXT, " +
                     "password TEXT, " +
@@ -53,12 +54,13 @@ namespace WotlkBotGui
         {
             List<Bot> bots = new List<Bot>();
 
-            using (var con = new MySqlConnection(cs))
+            using (var con = new SqliteConnection(cs))
             {
                 con.Open();
                 string sql = "SELECT id, account_name, char_name, password, script, class FROM bots";
-                var cmd = new MySqlCommand(sql, con);
-                MySqlDataReader rdr = cmd.ExecuteReader();
+                var cmd = con.CreateCommand();
+                cmd.CommandText = sql;
+                SqliteDataReader rdr= cmd.ExecuteReader();
 
                 while (rdr.Read())
                 {
@@ -78,11 +80,13 @@ namespace WotlkBotGui
         public Bot AddBot()
         {
             Bot bot = new Bot { AccountName = "New", CharName = "", Password = "", Script = "", Class = (int)Cls.Warrior };
-            using (var con = new MySqlConnection(cs))
+            
+            using (var con = new SqliteConnection(cs))
             {
                 con.Open();
                 var sql = "INSERT INTO bots(account_name, char_name, password, script, class) VALUES(@account_name, @char_name, @password, @script, @class);";
-                var cmd = new MySqlCommand(sql, con);
+                var cmd = con.CreateCommand();
+                cmd.CommandText = sql;
 
                 cmd.Parameters.AddWithValue("@account_name", bot.AccountName);
                 cmd.Parameters.AddWithValue("@char_name", bot.CharName);
@@ -92,18 +96,22 @@ namespace WotlkBotGui
                 cmd.Prepare();
 
                 cmd.ExecuteNonQuery();
-                bot.ID = (int)cmd.LastInsertedId;
+
+                cmd.CommandText = "SELECT last_insert_rowid()";
+                bot.ID = Convert.ToInt32(cmd.ExecuteScalar());
             }
+            
             return bot;
         }
 
         public void Update(Bot bot)
         {
-            using (var con = new MySqlConnection(cs))
+            using (var con = new SqliteConnection(cs))
             {
                 con.Open();
                 var sql = "REPLACE INTO bots(id, account_name, char_name, password, script, class) VALUES(@id, @account_name, @char_name, @password, @script, @class)";
-                var cmd = new MySqlCommand(sql, con);
+                var cmd = con.CreateCommand();
+                cmd.CommandText = sql;
 
                 cmd.Parameters.AddWithValue("@account_name", bot.AccountName);
                 cmd.Parameters.AddWithValue("@char_name", bot.CharName);
@@ -119,11 +127,12 @@ namespace WotlkBotGui
 
         public void DeleteBot(Bot bot)
         {
-            using (var con = new MySqlConnection(cs))
+            using (var con = new SqliteConnection(cs))
             {
                 con.Open();
                 var sql = "DELETE FROM bots WHERE id = @id";
-                var cmd = new MySqlCommand(sql, con);
+                var cmd = con.CreateCommand();
+                cmd.CommandText= sql;
                 cmd.Parameters.AddWithValue("@id", bot.ID);
                 cmd.Prepare();
 
