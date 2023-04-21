@@ -16,10 +16,11 @@ namespace WotlkClient.Clients
         public UInt32 MapID;
         public WoWGuid playerGuid;
         private List<Object> mObjects;
-
-        public ObjectMgr()
+        string prefix;
+        public ObjectMgr(string _prefix)
         {
             mObjects = new List<Object>();
+            prefix = _prefix;
         }
 
         public Object getPlayerObject()
@@ -38,7 +39,7 @@ namespace WotlkClient.Clients
 
         public void addObject(Object obj)
         {
-            Log.WriteLine(LogType.Debug, "Object created: {0}", obj.Guid.GetOldGuid());
+            Log.WriteLine(LogType.Debug, "Object created: {0}", prefix, obj.Guid.GetOldGuid());
             int index = getObjectIndex(obj.Guid);
             if (index != -1)
             {
@@ -56,7 +57,7 @@ namespace WotlkClient.Clients
 
         public void updateObject(Object obj)
         {
-            Log.WriteLine(LogType.Debug, "Object updated: {0}", obj.Guid.GetOldGuid());
+            Log.WriteLine(LogType.Debug, "Object updated: {0}", prefix, obj.Guid.GetOldGuid());
             int index = getObjectIndex(obj.Guid);
             if (index != -1)
             {

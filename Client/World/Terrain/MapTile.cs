@@ -8,8 +8,9 @@ namespace WotlkClient.Terrain
     {
         private int TileX;
         private int TileZ;
+        
 
-        public MapTile(String mapname, int x, int z) : base(mapname, x, z)
+        public MapTile(String mapname, int x, int z, string prefix) : base(mapname, x, z, prefix)
         {
             // Keep a note of what tile we are
             TileX = x;

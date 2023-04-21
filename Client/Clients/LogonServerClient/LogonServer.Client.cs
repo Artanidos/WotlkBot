@@ -23,6 +23,7 @@ namespace WotlkClient.Clients
         readonly string mUsername;
         readonly string mPassword;
         public bool Connected;
+        string prefix;
 
         //Packet Handling
         private PacketHandler pHandler;
@@ -63,14 +64,15 @@ namespace WotlkClient.Clients
         /// <param name="port">Port on which LogonServer listens for connection</param>
         /// <param name="username">Username</param>
         /// <param name="password">Password</param>
-        public LogonServerClient(string host, int port, string username, string password, LoginCompletedCallBack _loginCompletedCallBack)
+        public LogonServerClient(string host, int port, string username, string password, LoginCompletedCallBack callback)
         {
             Time.GetTime();
             mHost = host;
             mPort = port;
             mUsername = username.ToUpper();
             mPassword = password.ToUpper();
-            loginCompletedCallBack = _loginCompletedCallBack;
+            loginCompletedCallBack = callback;
+            prefix = username;
         }
 
         #endregion
@@ -96,14 +98,14 @@ namespace WotlkClient.Clients
 
                 mSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
   
-                Log.WriteLine(LogType.Normal, "Attempting to connect to Logon Server at {0}:{1}", host, port);
+                Log.WriteLine(LogType.Normal, "Attempting to connect to Logon Server at {0}:{1}", prefix, host, port);
                 mSocket.Connect(ASDest);
             }
             catch (Exception ex)
             {
-                Log.WriteLine(LogType.Error, "Exception Occured");
-                Log.WriteLine(LogType.Error, "Message: {0}", ex.Message);
-                Log.WriteLine(LogType.Error, "Stacktrace: {0}", ex.StackTrace);
+                Log.WriteLine(LogType.Error, "Exception Occured", prefix);
+                Log.WriteLine(LogType.Error, "Message: {0}", prefix, ex.Message);
+                Log.WriteLine(LogType.Error, "Stacktrace: {0}", prefix, ex.StackTrace);
                 System.Console.WriteLine("Unable to connect to server.");
                 if (loginCompletedCallBack != null)
                 {
@@ -113,11 +115,11 @@ namespace WotlkClient.Clients
                 return;
             }
 
-            Log.WriteLine(LogType.Success, "Succesfully connected to Logon Server at {0}:{1}", host, port);
+            Log.WriteLine(LogType.Success, "Succesfully connected to Logon Server at {0}:{1}", prefix, host, port);
 
             Connected = true;
             pHandler = new PacketHandler(this);
-            pLoop = new PacketLoop(this, mSocket);
+            pLoop = new PacketLoop(this, mSocket, prefix);
             pHandler.Initialize();
             Authenticate();
         }
@@ -179,8 +181,8 @@ namespace WotlkClient.Clients
         {
             if (Connected)
             {
-                Log.WriteLine(LogType.Network, "Sending packet {0}. Length: {1}", packet.packetId.ToString(), packet.Lenght());
-                Log.WriteLine(LogType.Packet, "{0}", packet.ToHex());
+                Log.WriteLine(LogType.Network, "Sending packet {0}. Length: {1}", mUsername, packet.packetId.ToString(), packet.Lenght());
+                Log.WriteLine(LogType.Packet, "{0}", mUsername, packet.ToHex());
                 Byte[] Data = packet.ToArray();
                 mSocket.Send(Data);
             }
@@ -198,7 +200,7 @@ namespace WotlkClient.Clients
             byte error = packetIn.ReadByte();
             if (error != 0x00)
             {
-                Log.WriteLine(LogType.Error, "Authentication error: {0}", (AccountStatus)error);
+                Log.WriteLine(LogType.Error, "Authentication error: {0}", prefix, (AccountStatus)error);
                 if (loginCompletedCallBack != null)
                 {
                     loginCompletedCallBack(2);
@@ -267,7 +269,7 @@ namespace WotlkClient.Clients
         {
             if (packetIn.ReadByte() == 0x00)
             {
-                Log.WriteLine(LogType.Success, "Authenitcation successed. Requesting RealmList");
+                Log.WriteLine(LogType.Success, "Authenitcation successed. Requesting RealmList", prefix);
 
                 if(loginCompletedCallBack != null)
                 {
@@ -288,7 +290,7 @@ namespace WotlkClient.Clients
 
             //Console.Write(packetIn.ToHex());
 
-            Log.WriteLine(LogType.Success, "Got information about {0} realms.", realmscount);
+            Log.WriteLine(LogType.Success, "Got information about {0} realms.", prefix, realmscount);
             Realm[] realms = new Realm[realmscount];
             try
             {
@@ -313,9 +315,9 @@ namespace WotlkClient.Clients
             }
             catch (Exception ex)
             {
-                Log.WriteLine(LogType.Error, "Exception Occured");
-                Log.WriteLine(LogType.Error, "Message: {0}", ex.Message);
-                Log.WriteLine(LogType.Error, "Stacktrace: {0}", ex.StackTrace);
+                Log.WriteLine(LogType.Error, "Exception Occured", prefix);
+                Log.WriteLine(LogType.Error, "Message: {0}", prefix, ex.Message);
+                Log.WriteLine(LogType.Error, "Stacktrace: {0}", prefix, ex.StackTrace);
                 Disconnect();
                 if (realmListCompletedCallBack != null)
                     realmListCompletedCallBack(1);
@@ -352,7 +354,7 @@ namespace WotlkClient.Clients
             {
                 if (!File.Exists(@"crc\" + filename))
                 {
-                    Log.WriteLine(LogType.Error, "CRC File {0} doesn't exist!", filename);
+                    Log.WriteLine(LogType.Error, "CRC File {0} doesn't exist!", prefix, filename);
                 }
 
                 FileStream fs = new FileStream(@"crc\" + filename, FileMode.Open, FileAccess.Read);
@@ -373,7 +375,7 @@ namespace WotlkClient.Clients
 
         public void HandlePacket(PacketIn packet)
         {
-            Log.WriteLine(LogType.Packet, "{0}", packet.ToHex());
+            Log.WriteLine(LogType.Packet, "{0}", prefix, packet.ToHex());
             pHandler.HandlePacket(packet);
         }
 

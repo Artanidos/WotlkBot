@@ -65,10 +65,10 @@ namespace WotlkClient.Clients
                 Ping_Res_Time = MM_GetTime();
                 Latency = Ping_Res_Time - Ping_Req_Time;
                 Ping_Seq += 1;
-                Log.WriteLine(LogType.Debug, "Got nice pong. We love server;)");
+                Log.WriteLine(LogType.Debug, "Got nice pong. We love server;)", mUsername);
             }
             else
-                Log.WriteLine(LogType.Error, "Server pong'd bad sequence! Ours: {0} Theirs: {1}", Ping_Seq, Server_Seq);
+                Log.WriteLine(LogType.Error, "Server pong'd bad sequence! Ours: {0} Theirs: {1}", mUsername, Ping_Seq, Server_Seq);
         }
 
         public void SendEmote(EmoteType EmoteType)

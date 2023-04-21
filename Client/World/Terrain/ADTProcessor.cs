@@ -20,13 +20,15 @@ namespace WotlkClient.Terrain
         private MODF[] wmoLocations;        // List of WMO Locations on this MapTile
         protected MCNK[][] mapChunkTable;   // 16x16 MapChunk Table
         private FileStream adtStream;
-
+        string prefix;
+ 
         // ** Removed because this constructor isn't neccessary.
-        public ADT(String mapname, int x, int z)
+        public ADT(String mapname, int x, int z, string _prefix)
         {
             string filename = String.Format(@"ADT\{0}\{0}_{1}_{2}.adt", mapname, x, z);
             adtStream = new FileStream(filename, FileMode.Open);
             parseFile();
+            prefix = _prefix;
         }
 
         private void parseFile()
@@ -210,7 +212,7 @@ namespace WotlkClient.Terrain
                 for (int j = 0; j < 16; j++)
                 {
                     int index = i * 16 + j;
-                    Log.WriteLine(LogType.Terrain,  "Parsing MCNK Chunk #{0} [{1}, {2}]", index, i, j);
+                    Log.WriteLine(LogType.Terrain,  "Parsing MCNK Chunk #{0} [{1}, {2}]", prefix, index, i, j);
                     mapChunkTable[i][j] = parseMapChunk(ms, mcin_array[index].MCNK_offset, mcin_array[index].MCNK_size);
                 }
             }

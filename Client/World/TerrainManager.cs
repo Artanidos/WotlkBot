@@ -15,10 +15,11 @@ namespace WotlkClient.Terrain
         static float TILESIZE = 533.33333f;
         static float ZEROPOINT = 32.0f * TILESIZE;
         private UInt32 MapId;
-
-        public TerrainMgr()
+        string prefix;
+        public TerrainMgr(string _prefix)
         {
             mapTiles = new List<MapTile>();
+            prefix = _prefix;
         }
 
         public void ChangeMap(UInt32 mapId)
@@ -136,7 +137,7 @@ namespace WotlkClient.Terrain
             MapTable map = new MapTable();
 
             string mapname = map.getMapName(MapId);
-            MapTile tile = new MapTile(mapname, x, z);
+            MapTile tile = new MapTile(mapname, x, z, prefix);
             mapTiles.Add(tile);
             return tile;
         }

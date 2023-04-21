@@ -27,12 +27,13 @@ namespace WotlkClient.Clients
         UInt32 lastUpdateTime;
         ObjectMgr objectMgr;
         TerrainMgr terrainMgr;
+        string prefix;
 
-
-        public MovementMgr(WorldServerClient Client)
+        public MovementMgr(WorldServerClient Client, string _prefix)
         {
             objectMgr = Client.objectMgr;
             terrainMgr = Client.terrainMgr;
+            prefix = _prefix;
         }
 
         public void Start()
@@ -48,9 +49,9 @@ namespace WotlkClient.Clients
             }
             catch (Exception ex)
             {
-                Log.WriteLine(LogType.Error, "Exception Occured");
-                Log.WriteLine(LogType.Error, "Message: {0}", ex.Message);
-                Log.WriteLine(LogType.Error, "Stacktrace: {0}", ex.StackTrace);
+                Log.WriteLine(LogType.Error, "Exception Occured", prefix);
+                Log.WriteLine(LogType.Error, "Message: {0}", prefix, ex.Message);
+                Log.WriteLine(LogType.Error, "Stacktrace: {0}", prefix, ex.StackTrace);
             }
         }
 
@@ -108,9 +109,9 @@ namespace WotlkClient.Clients
                 }
                 catch (Exception ex)
                 {
-                    Log.WriteLine(LogType.Error, "Exception Occured");
-                    Log.WriteLine(LogType.Error, "Message: {0}", ex.Message);
-                    Log.WriteLine(LogType.Error, "Stacktrace: {0}", ex.StackTrace);
+                    Log.WriteLine(LogType.Error, "Exception Occured", prefix);
+                    Log.WriteLine(LogType.Error, "Message: {0}", prefix, ex.Message);
+                    Log.WriteLine(LogType.Error, "Stacktrace: {0}", prefix, ex.StackTrace);
                 }
             }
         }

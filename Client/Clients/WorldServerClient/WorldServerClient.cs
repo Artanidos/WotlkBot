@@ -43,6 +43,7 @@ namespace WotlkClient.Clients
         readonly string mCharname;
         private byte[] mKey;
         public bool Connected;
+        string prefix;
 
         //Packet Handling
         private PacketHandler pHandler;
@@ -60,30 +61,19 @@ namespace WotlkClient.Clients
         public Character[] Charlist = new Character[0];
         
 
-        public WorldServerClient(string user, Realm rl, byte[] key, string charName, AuthCompletedCallBack _callback)
+        public WorldServerClient(string user, Realm rl, byte[] key, string charName, AuthCompletedCallBack callback)
         {
             mUsername = user.ToUpper();
             mCharname = charName;
-            objectMgr = new ObjectMgr();
-            movementMgr = new MovementMgr(this);
-            combatMgr = new CombatMgr(this);
-            terrainMgr = new TerrainMgr();
+            objectMgr = new ObjectMgr(prefix);
+            movementMgr = new MovementMgr(this, prefix);
+            combatMgr = new CombatMgr(this, prefix);
+            terrainMgr = new TerrainMgr(prefix);
             realm = rl;
             mKey = key;
-            authCompletedCallBack = _callback;
+            authCompletedCallBack = callback;
+            prefix = user;
         }
-
-        public WorldServerClient(Realm rl, byte[] key)
-        {
-            mUsername = Config.Login.ToUpper();
-            objectMgr = new ObjectMgr();
-            movementMgr = new MovementMgr(this);
-            combatMgr = new CombatMgr(this);
-            terrainMgr = new TerrainMgr();
-            realm = rl;
-            mKey = key;
-        }
-
 
         public void Connect()
         {
@@ -99,12 +89,12 @@ namespace WotlkClient.Clients
             {
                 mSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
                 mSocket.Connect(ep);
-                Log.WriteLine(LogType.Success, "Successfully connected to WorldServer at: {0}!", realm.Address);
+                Log.WriteLine(LogType.Success, "Successfully connected to WorldServer at: {0}!", prefix, realm.Address);
 
             }
             catch (SocketException ex)
             {
-                Log.WriteLine(LogType.Error, "Failed to connect to realm: {0}", ex.Message);
+                Log.WriteLine(LogType.Error, "Failed to connect to realm: {0}", prefix, ex.Message);
                 Disconnect();
                 if (charLoginCompletedCallBack != null)
                     charLoginCompletedCallBack(1);
@@ -114,8 +104,8 @@ namespace WotlkClient.Clients
             byte[] nullA = new byte[24];
             mCrypt = new PacketCrypt(nullA);
             Connected = true;
-            pHandler = new PacketHandler(this);
-            pLoop = new PacketLoop(this, mSocket);
+            pHandler = new PacketHandler(this, prefix);
+            pLoop = new PacketLoop(this, mSocket, prefix);
             pLoop.Start();
             pHandler.Initialize();
         }
@@ -145,6 +135,7 @@ namespace WotlkClient.Clients
             ping.Write(Ping_Seq);
             ping.Write(Latency);
             Send(ping);
+            Console.WriteLine("pinging");
         }
 
         public void Send(PacketOut packet)
@@ -153,9 +144,8 @@ namespace WotlkClient.Clients
             {
                 if (!Connected)
                     return;
-                Log.WriteLine(LogType.Network, "Sending packet: {0}", packet.packetId);
-                if (!Connected)
-                    return;
+                Log.WriteLine(LogType.Network, "Sending packet: {0}", prefix, packet.packetId);
+
                 Byte[] Data = packet.ToArray();
 
                 int Length = Data.Length;
@@ -164,16 +154,16 @@ namespace WotlkClient.Clients
                 Packet[1] = (byte)(Length & 0xff);
                 Data.CopyTo(Packet, 2);
                 mCrypt.Encrypt(Packet, 0, 6);
-                //While writing this part of code I had a strange feeling of Deja-Vu or whatever it's called :>
 
-                Log.WriteLine(LogType.Packet,"{0}", packet.ToHex());
+                Log.WriteLine(LogType.Packet,"{0}", prefix, packet.ToHex());
                 mSocket.Send(Packet);
             }
             catch (Exception ex)
             {
-                Log.WriteLine(LogType.Error, "Exception Occured");
-                Log.WriteLine(LogType.Error, "Message: {0}", ex.Message);
-                Log.WriteLine(LogType.Error, "Stacktrace: {0}", ex.StackTrace);
+                Log.WriteLine(LogType.Error, "Exception Occured", prefix);
+                Log.WriteLine(LogType.Error, "Message: {0}", prefix, ex.Message);
+                Log.WriteLine(LogType.Error, "Stacktrace: {0}", prefix, ex.StackTrace);
+                HardDisconnect();
             }
         }
 
@@ -186,7 +176,7 @@ namespace WotlkClient.Clients
 
         public void HandlePacket(PacketIn packet)
         {
-            Log.WriteLine(LogType.Packet, "{0}", packet.ToHex());
+            Log.WriteLine(LogType.Packet, "{0}", mUsername, packet.ToHex());
             pHandler.HandlePacket(packet);
         }
 

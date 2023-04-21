@@ -19,10 +19,11 @@ namespace WotlkClient.Clients
         List<PacketHandle> Handles;
         readonly LogonServerClient tClient;
         readonly WorldServerClient wClient;
+        string username;
 
-
-        public PacketHandler(WorldServerClient client)
+        public PacketHandler(WorldServerClient client, string _username)
         {
+            username = _username;
             Handles = new List<PacketHandle>();
             wClient = client;
         }
@@ -54,7 +55,7 @@ namespace WotlkClient.Clients
                     }
                 }
             }
-            Log.WriteLine(LogType.Success, "Loaded {0} Packet handlers.", x);
+            Log.WriteLine(LogType.Success, "Loaded {0} Packet handlers.", username, x);
         }
 
         public void HandlePacket(PacketIn packet)
@@ -66,17 +67,17 @@ namespace WotlkClient.Clients
 
                 System.Object[] obj = new System.Object[1];
                 obj[0] = packet;
-                
+
                 try
                 {
                     if (packet.PacketId.Service == ServiceType.Logon)
                     {
-                        Log.WriteLine(LogType.Network, "Handling packet: {0}", handle.packetId);
-                        handle.MethodInfo.Invoke(tClient, obj);                      
+                        Log.WriteLine(LogType.Network, "Handling packet: {0}", username, handle.packetId);
+                        handle.MethodInfo.Invoke(tClient, obj);
                     }
                     else if (packet.PacketId.Service == ServiceType.World)
                     {
-                        Log.WriteLine(LogType.Network, "Handling packet: {0}", handle.packetId);
+                        Log.WriteLine(LogType.Network, "Handling packet: {0}", username, handle.packetId);
                         handle.MethodInfo.Invoke(wClient, obj);
                     }
                     //Log.WriteLine(LogType.Packet, packet.ToHex());
@@ -88,7 +89,7 @@ namespace WotlkClient.Clients
             }
             else
             {
-                 //Log.WriteLine(LogType.Normal, "Unhandled packet: {0}", packet.PacketId.ToString());
+                //Log.WriteLine(LogType.Normal, "Unhandled packet: {0}", packet.PacketId.ToString());
             }
         }
 

@@ -222,7 +222,7 @@ namespace WotlkClient.Clients
                 {
                     UInt32 val = packet.ReadUInt32();
                     newObject.SetField(i, val);
-                    Log.WriteLine(LogType.Normal, "Update Field: {0} = {1}", (UpdateFields)i, val);
+                    Log.WriteLine(LogType.Normal, "Update Field: {0} = {1}", mUsername, (UpdateFields)i, val);
                 }
             }
         }
@@ -354,7 +354,7 @@ namespace WotlkClient.Clients
                         ChatQueue message = (ChatQueue)ChatQueued[i];
                         if (message.GUID.GetOldGuid() == guid.GetOldGuid())
                         {
-                            Log.WriteLine(LogType.Chat, "[{1}] {0}", message.Message, name);
+                            Log.WriteLine(LogType.Chat, "[{1}] {0}", mUsername, message.Message, name);
                             ChatQueued.Remove(message);
                         }
                     }

@@ -19,7 +19,7 @@ namespace WotlkClient.Clients
         [PacketHandlerAtribute(WorldServerOpCode.SMSG_CHANNEL_NOTIFY)]
         public void HandleChannelNotify(PacketIn packet)
         {
-            Log.WriteLine(LogType.Success, "Dostalem takie gowno: {0}", packet.ReadByte());
+            Log.WriteLine(LogType.Success, "Dostalem takie gowno: {0}", mUsername, packet.ReadByte());
         }
 
         [PacketHandlerAtribute(WorldServerOpCode.SMSG_MESSAGECHAT)]
@@ -87,13 +87,13 @@ namespace WotlkClient.Clients
                     return;
                 }
                 
-                Log.WriteLine(LogType.Chat, "[{1}] {0}", Message, username);
+                Log.WriteLine(LogType.Chat, "[{1}] {0}", mUsername, Message);
             }
             catch (Exception ex)
             {
-                Log.WriteLine(LogType.Error, "Exception Occured");
-                Log.WriteLine(LogType.Error, "Message: {0}", ex.Message);
-                Log.WriteLine(LogType.Error, "Stacktrace: {0}", ex.StackTrace);
+                Log.WriteLine(LogType.Error, "Exception Occured", mUsername);
+                Log.WriteLine(LogType.Error, "Message: {0}", mUsername, ex.Message);
+                Log.WriteLine(LogType.Error, "Stacktrace: {0}", mUsername, ex.StackTrace);
             }
         }
 

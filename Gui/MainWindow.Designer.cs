@@ -39,6 +39,10 @@
             this.label3 = new System.Windows.Forms.Label();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPageDetails = new System.Windows.Forms.TabPage();
+            this.textBoxScript = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.checkBoxStart = new System.Windows.Forms.CheckBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.comboBoxClass = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
             this.textBoxCharacter = new System.Windows.Forms.TextBox();
@@ -50,10 +54,6 @@
             this.tabPageScript = new System.Windows.Forms.TabPage();
             this.tabPageLog = new System.Windows.Forms.TabPage();
             this.textBoxLog = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.checkBoxStart = new System.Windows.Forms.CheckBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.textBoxScript = new System.Windows.Forms.TextBox();
             this.buttonStop = new System.Windows.Forms.Button();
             this.tabControl.SuspendLayout();
             this.tabPageDetails.SuspendLayout();
@@ -64,7 +64,7 @@
             // buttonStart
             // 
             this.buttonStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonStart.Location = new System.Drawing.Point(904, 487);
+            this.buttonStart.Location = new System.Drawing.Point(549, 342);
             this.buttonStart.Margin = new System.Windows.Forms.Padding(4);
             this.buttonStart.Name = "buttonStart";
             this.buttonStart.Size = new System.Drawing.Size(100, 28);
@@ -117,7 +117,7 @@
             this.listBoxBots.ItemHeight = 16;
             this.listBoxBots.Location = new System.Drawing.Point(16, 76);
             this.listBoxBots.Name = "listBoxBots";
-            this.listBoxBots.Size = new System.Drawing.Size(259, 400);
+            this.listBoxBots.Size = new System.Drawing.Size(259, 255);
             this.listBoxBots.TabIndex = 4;
             this.listBoxBots.SelectedIndexChanged += new System.EventHandler(this.listBoxBots_SelectedIndexChanged);
             // 
@@ -134,7 +134,7 @@
             // buttonAdd
             // 
             this.buttonAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonAdd.Location = new System.Drawing.Point(13, 490);
+            this.buttonAdd.Location = new System.Drawing.Point(13, 345);
             this.buttonAdd.Margin = new System.Windows.Forms.Padding(4);
             this.buttonAdd.Name = "buttonAdd";
             this.buttonAdd.Size = new System.Drawing.Size(100, 28);
@@ -146,7 +146,7 @@
             // buttonDelete
             // 
             this.buttonDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonDelete.Location = new System.Drawing.Point(121, 490);
+            this.buttonDelete.Location = new System.Drawing.Point(121, 345);
             this.buttonDelete.Margin = new System.Windows.Forms.Padding(4);
             this.buttonDelete.Name = "buttonDelete";
             this.buttonDelete.Size = new System.Drawing.Size(100, 28);
@@ -176,7 +176,7 @@
             this.tabControl.Location = new System.Drawing.Point(356, 31);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(648, 449);
+            this.tabControl.Size = new System.Drawing.Size(293, 304);
             this.tabControl.TabIndex = 9;
             // 
             // tabPageDetails
@@ -196,10 +196,49 @@
             this.tabPageDetails.Location = new System.Drawing.Point(4, 25);
             this.tabPageDetails.Name = "tabPageDetails";
             this.tabPageDetails.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageDetails.Size = new System.Drawing.Size(640, 420);
+            this.tabPageDetails.Size = new System.Drawing.Size(285, 275);
             this.tabPageDetails.TabIndex = 0;
             this.tabPageDetails.Text = "Details";
             this.tabPageDetails.UseVisualStyleBackColor = true;
+            // 
+            // textBoxScript
+            // 
+            this.textBoxScript.Location = new System.Drawing.Point(12, 207);
+            this.textBoxScript.Margin = new System.Windows.Forms.Padding(4);
+            this.textBoxScript.Name = "textBoxScript";
+            this.textBoxScript.Size = new System.Drawing.Size(255, 22);
+            this.textBoxScript.TabIndex = 20;
+            this.textBoxScript.TextChanged += new System.EventHandler(this.textBoxScript_TextChanged);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(9, 187);
+            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(41, 16);
+            this.label9.TabIndex = 19;
+            this.label9.Text = "Script";
+            // 
+            // checkBoxStart
+            // 
+            this.checkBoxStart.AutoSize = true;
+            this.checkBoxStart.Location = new System.Drawing.Point(10, 236);
+            this.checkBoxStart.Name = "checkBoxStart";
+            this.checkBoxStart.Size = new System.Drawing.Size(53, 20);
+            this.checkBoxStart.TabIndex = 18;
+            this.checkBoxStart.Text = "Start";
+            this.checkBoxStart.UseVisualStyleBackColor = true;
+            this.checkBoxStart.CheckedChanged += new System.EventHandler(this.checkBoxStart_CheckedChanged);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(9, 187);
+            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(0, 16);
+            this.label8.TabIndex = 17;
             // 
             // comboBoxClass
             // 
@@ -313,50 +352,11 @@
             this.textBoxLog.TabIndex = 0;
             this.textBoxLog.Text = "[12:34:16] Logged in";
             // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(9, 187);
-            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(0, 16);
-            this.label8.TabIndex = 17;
-            // 
-            // checkBoxStart
-            // 
-            this.checkBoxStart.AutoSize = true;
-            this.checkBoxStart.Location = new System.Drawing.Point(10, 236);
-            this.checkBoxStart.Name = "checkBoxStart";
-            this.checkBoxStart.Size = new System.Drawing.Size(53, 20);
-            this.checkBoxStart.TabIndex = 18;
-            this.checkBoxStart.Text = "Start";
-            this.checkBoxStart.UseVisualStyleBackColor = true;
-            this.checkBoxStart.CheckedChanged += new System.EventHandler(this.checkBoxStart_CheckedChanged);
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(9, 187);
-            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(41, 16);
-            this.label9.TabIndex = 19;
-            this.label9.Text = "Script";
-            // 
-            // textBoxScript
-            // 
-            this.textBoxScript.Location = new System.Drawing.Point(12, 207);
-            this.textBoxScript.Margin = new System.Windows.Forms.Padding(4);
-            this.textBoxScript.Name = "textBoxScript";
-            this.textBoxScript.Size = new System.Drawing.Size(255, 22);
-            this.textBoxScript.TabIndex = 20;
-            this.textBoxScript.TextChanged += new System.EventHandler(this.textBoxScript_TextChanged);
-            // 
             // buttonStop
             // 
             this.buttonStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonStop.Enabled = false;
-            this.buttonStop.Location = new System.Drawing.Point(796, 487);
+            this.buttonStop.Location = new System.Drawing.Point(441, 342);
             this.buttonStop.Margin = new System.Windows.Forms.Padding(4);
             this.buttonStop.Name = "buttonStop";
             this.buttonStop.Size = new System.Drawing.Size(100, 28);
@@ -369,7 +369,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1020, 531);
+            this.ClientSize = new System.Drawing.Size(665, 386);
             this.Controls.Add(this.buttonStop);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.label3);

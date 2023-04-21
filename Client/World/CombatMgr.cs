@@ -27,13 +27,14 @@ namespace WotlkClient.Clients
         ObjectMgr objectMgr;
         MovementMgr movementMgr;
         Boolean isFighting = false;
+        string prefix;
 
-
-        public CombatMgr(WorldServerClient Client)
+        public CombatMgr(WorldServerClient Client, string _prefix)
         {
             objectMgr = Client.objectMgr;
             movementMgr = Client.movementMgr;
             client = Client;
+            prefix = _prefix;
         }
 
         public void Start()
@@ -48,9 +49,9 @@ namespace WotlkClient.Clients
             }
             catch (Exception ex)
             {
-                Log.WriteLine(LogType.Error, "Exception Occured");
-                Log.WriteLine(LogType.Error, "Message: {0}", ex.Message);
-                Log.WriteLine(LogType.Error, "Stacktrace: {0}", ex.StackTrace);
+                Log.WriteLine(LogType.Error, "Exception Occured", prefix);
+                Log.WriteLine(LogType.Error, "Message: {0}", prefix, ex.Message);
+                Log.WriteLine(LogType.Error, "Stacktrace: {0}", prefix, ex.StackTrace);
             }
         }
 
@@ -92,9 +93,9 @@ namespace WotlkClient.Clients
                 }
                 catch (Exception ex)
                 {
-                    Log.WriteLine(LogType.Error, "Exception Occured");
-                    Log.WriteLine(LogType.Error, "Message: {0}", ex.Message);
-                    Log.WriteLine(LogType.Error, "Stacktrace: {0}", ex.StackTrace);
+                    Log.WriteLine(LogType.Error, "Exception Occured", prefix);
+                    Log.WriteLine(LogType.Error, "Message: {0}", prefix, ex.Message);
+                    Log.WriteLine(LogType.Error, "Stacktrace: {0}", prefix, ex.StackTrace);
                 }
             }
         }
