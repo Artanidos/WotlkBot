@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using WotlkClient.Clients;
 using WotlkClient.Constants;
 
@@ -15,9 +10,11 @@ namespace WotlkBotGui
         private LogonServerClient loginClient;
         private WorldServerClient worldClient;
         private Bot bot;
-
-        public void Main(Bot bot, string host, int port)
+        string master;
+        public void Main(Bot bot, string host, int port, string _master)
         {
+            master = _master;
+
             LoginCompletedCallBack callback = new LoginCompletedCallBack(LoginComplete); ;
             this.bot = bot;
             try
@@ -70,7 +67,7 @@ namespace WotlkBotGui
                 if (realm != null)
                 {
                     AuthCompletedCallBack callback = new AuthCompletedCallBack(AuthCompleted);
-                    worldClient = new WorldServerClient(bot.AccountName, realm.Value, loginClient.mKey, bot.CharName, callback);
+                    worldClient = new WorldServerClient(bot.AccountName, realm.Value, loginClient.mKey, bot.CharName, master, callback);
                     worldClient.Connect();
                 }
             }

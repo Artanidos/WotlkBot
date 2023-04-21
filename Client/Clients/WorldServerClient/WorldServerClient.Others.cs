@@ -18,20 +18,11 @@ namespace WotlkClient.Clients
         [PacketHandlerAtribute(WorldServerOpCode.SMSG_GROUP_INVITE)]
         public void HandleGroupInvite(PacketIn inpacket)
         {
-            // 01 41 72 74 00 00 00 00 00 00 00 00 00 00
-            /*
-            System.Console.WriteLine("Group invite");
-            byte[] bytes = inpacket.ReadBytes((int)inpacket.BaseStream.Length);
-            foreach (byte b in bytes)
-            {
-                Console.Write(b.ToString("X2") + " ");
-            }
-            */
             inpacket.ReadByte();
             string inviter = inpacket.ReadString();
             System.Console.WriteLine("Invite from " + inviter);
 
-            if (inviter == "Art")
+            if (inviter == master)
             {
                 PacketOut packet = new PacketOut(WorldServerOpCode.CMSG_GROUP_ACCEPT);
                 packet.Write((UInt32)0);
@@ -65,10 +56,10 @@ namespace WotlkClient.Clients
                 Ping_Res_Time = MM_GetTime();
                 Latency = Ping_Res_Time - Ping_Req_Time;
                 Ping_Seq += 1;
-                Log.WriteLine(LogType.Debug, "Got nice pong. We love server;)", mUsername);
+                Log.WriteLine(LogType.Debug, "Got nice pong. We love server;)", prefix);
             }
             else
-                Log.WriteLine(LogType.Error, "Server pong'd bad sequence! Ours: {0} Theirs: {1}", mUsername, Ping_Seq, Server_Seq);
+                Log.WriteLine(LogType.Error, "Server pong'd bad sequence! Ours: {0} Theirs: {1}", prefix, Ping_Seq, Server_Seq);
         }
 
         public void SendEmote(EmoteType EmoteType)

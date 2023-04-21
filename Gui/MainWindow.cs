@@ -18,13 +18,18 @@ namespace WotlkBotGui
 
         private void buttonStart_Click(object sender, EventArgs e)
         {
+            if (textBoxMaster.Text == "")
+            {
+                MessageBox.Show("Please fillout the field MASTER. The bots accept invites only from this character.");
+                return;
+            }
             buttonStart.Enabled = false;
             foreach (Bot b in listBoxBots.Items)
             {
                 if (b.Run)
                 {
                     BotMgr bm = new BotMgr();
-                    Thread t = new Thread(() => bm.Main(b, textBoxHost.Text, 3724));
+                    Thread t = new Thread(() => bm.Main(b, textBoxHost.Text, 3724, textBoxMaster.Text));
                     threads.Add(t);
                     t.Start();
                 }

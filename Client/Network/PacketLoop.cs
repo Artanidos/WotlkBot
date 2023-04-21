@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Net;
 using System.Net.Sockets;
-
-using WotlkClient.Network;
+using System.Threading;
 using WotlkClient.Clients;
 using WotlkClient.Constants;
 using WotlkClient.Shared;

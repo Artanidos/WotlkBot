@@ -55,6 +55,8 @@
             this.tabPageLog = new System.Windows.Forms.TabPage();
             this.textBoxLog = new System.Windows.Forms.TextBox();
             this.buttonStop = new System.Windows.Forms.Button();
+            this.label10 = new System.Windows.Forms.Label();
+            this.textBoxMaster = new System.Windows.Forms.TextBox();
             this.tabControl.SuspendLayout();
             this.tabPageDetails.SuspendLayout();
             this.tabPageScript.SuspendLayout();
@@ -115,16 +117,16 @@
             this.listBoxBots.FormattingEnabled = true;
             this.listBoxBots.IntegralHeight = false;
             this.listBoxBots.ItemHeight = 16;
-            this.listBoxBots.Location = new System.Drawing.Point(16, 76);
+            this.listBoxBots.Location = new System.Drawing.Point(16, 124);
             this.listBoxBots.Name = "listBoxBots";
-            this.listBoxBots.Size = new System.Drawing.Size(259, 255);
+            this.listBoxBots.Size = new System.Drawing.Size(259, 207);
             this.listBoxBots.TabIndex = 4;
             this.listBoxBots.SelectedIndexChanged += new System.EventHandler(this.listBoxBots_SelectedIndexChanged);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 57);
+            this.label2.Location = new System.Drawing.Point(13, 105);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(34, 16);
@@ -324,7 +326,7 @@
             this.tabPageScript.Location = new System.Drawing.Point(4, 25);
             this.tabPageScript.Name = "tabPageScript";
             this.tabPageScript.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageScript.Size = new System.Drawing.Size(640, 420);
+            this.tabPageScript.Size = new System.Drawing.Size(285, 275);
             this.tabPageScript.TabIndex = 1;
             this.tabPageScript.Text = "Script";
             this.tabPageScript.UseVisualStyleBackColor = true;
@@ -334,7 +336,7 @@
             this.tabPageLog.Controls.Add(this.textBoxLog);
             this.tabPageLog.Location = new System.Drawing.Point(4, 25);
             this.tabPageLog.Name = "tabPageLog";
-            this.tabPageLog.Size = new System.Drawing.Size(640, 420);
+            this.tabPageLog.Size = new System.Drawing.Size(285, 275);
             this.tabPageLog.TabIndex = 2;
             this.tabPageLog.Text = "Log";
             this.tabPageLog.UseVisualStyleBackColor = true;
@@ -365,11 +367,31 @@
             this.buttonStop.UseVisualStyleBackColor = true;
             this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
             // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(17, 59);
+            this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(48, 16);
+            this.label10.TabIndex = 11;
+            this.label10.Text = "Master";
+            // 
+            // textBoxMaster
+            // 
+            this.textBoxMaster.Location = new System.Drawing.Point(16, 79);
+            this.textBoxMaster.Margin = new System.Windows.Forms.Padding(4);
+            this.textBoxMaster.Name = "textBoxMaster";
+            this.textBoxMaster.Size = new System.Drawing.Size(255, 22);
+            this.textBoxMaster.TabIndex = 12;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(665, 386);
+            this.Controls.Add(this.textBoxMaster);
+            this.Controls.Add(this.label10);
             this.Controls.Add(this.buttonStop);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.label3);
@@ -427,6 +449,8 @@
         private System.Windows.Forms.TextBox textBoxScript;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Button buttonStop;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.TextBox textBoxMaster;
     }
 }
 

@@ -24,7 +24,7 @@ namespace WotlkClient.Clients
         readonly string mPassword;
         public bool Connected;
         string prefix;
-
+       
         //Packet Handling
         private PacketHandler pHandler;
         private PacketLoop pLoop = null;
@@ -118,7 +118,7 @@ namespace WotlkClient.Clients
             Log.WriteLine(LogType.Success, "Succesfully connected to Logon Server at {0}:{1}", prefix, host, port);
 
             Connected = true;
-            pHandler = new PacketHandler(this);
+            pHandler = new PacketHandler(this, prefix);
             pLoop = new PacketLoop(this, mSocket, prefix);
             pHandler.Initialize();
             Authenticate();
@@ -181,8 +181,8 @@ namespace WotlkClient.Clients
         {
             if (Connected)
             {
-                Log.WriteLine(LogType.Network, "Sending packet {0}. Length: {1}", mUsername, packet.packetId.ToString(), packet.Lenght());
-                Log.WriteLine(LogType.Packet, "{0}", mUsername, packet.ToHex());
+                Log.WriteLine(LogType.Network, "Sending packet {0}. Length: {1}", prefix, packet.packetId.ToString(), packet.Lenght());
+                Log.WriteLine(LogType.Packet, "{0}", prefix, packet.ToHex());
                 Byte[] Data = packet.ToArray();
                 mSocket.Send(Data);
             }

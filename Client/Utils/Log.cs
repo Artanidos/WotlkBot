@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using System.Net.NetworkInformation;
-using System.Linq.Expressions;
 
 namespace WotlkClient.Shared
 {
@@ -21,11 +16,45 @@ namespace WotlkClient.Shared
                 {
                     if (type == LogType.Packet)
                     {
-                        StreamWriter packetFile = File.AppendText("logs/" + prefix + "_log.txt");
-                        packetFile.WriteLine(parameters[0].ToString());
+                        StreamWriter packetFile = File.AppendText("logs/" + prefix + "_packet_log.txt");
+                        if (parameters.Length > 0)
+                            packetFile.WriteLine(parameters[0].ToString());
                         packetFile.Flush();
                         packetFile.Close();
                     }
+                    else if(type == LogType.Network)
+                    {
+                        StreamWriter packetFile = File.AppendText("logs/" + prefix + "_network_log.txt");
+                        if(parameters.Length > 0)
+                            packetFile.WriteLine(parameters[0].ToString());
+                        packetFile.Flush();
+                        packetFile.Close();
+                    }
+                    else if (type == LogType.Error)
+                    {
+                        StreamWriter packetFile = File.AppendText("logs/" + prefix + "_error_log.txt");
+                        if (parameters.Length > 0)
+                            packetFile.WriteLine(parameters[0].ToString());
+                        packetFile.Flush();
+                        packetFile.Close();
+                    }
+                    else if (type == LogType.Debug)
+                    {
+                        StreamWriter packetFile = File.AppendText("logs/" + prefix + "_debug_log.txt");
+                        if (parameters.Length > 0)
+                            packetFile.WriteLine(parameters[0].ToString());
+                        packetFile.Flush();
+                        packetFile.Close();
+                    }
+                    else if (type == LogType.Chat)
+                    {
+                        StreamWriter packetFile = File.AppendText("logs/" + prefix + "_chat_log.txt");
+                        if (parameters.Length > 0)
+                            packetFile.WriteLine(parameters[0].ToString());
+                        packetFile.Flush();
+                        packetFile.Close();
+                    }
+
                 }
             }
             catch (Exception ex)

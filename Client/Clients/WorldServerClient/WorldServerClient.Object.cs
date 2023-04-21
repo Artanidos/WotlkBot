@@ -222,7 +222,7 @@ namespace WotlkClient.Clients
                 {
                     UInt32 val = packet.ReadUInt32();
                     newObject.SetField(i, val);
-                    Log.WriteLine(LogType.Normal, "Update Field: {0} = {1}", mUsername, (UpdateFields)i, val);
+                    Log.WriteLine(LogType.Normal, "Update Field: {0} = {1}", prefix, (UpdateFields)i, val);
                 }
             }
         }

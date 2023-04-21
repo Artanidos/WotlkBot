@@ -1,19 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Net;
 using System.Net.Sockets;
-using System.Timers;
-using System.IO;
-using System.Threading;
 using System.Runtime.InteropServices;
-using System.Resources;
-
-using WotlkClient.Shared;
-using WotlkClient.Network;
-using WotlkClient.Crypt;
+using System.Timers;
 using WotlkClient.Constants;
+using WotlkClient.Crypt;
+using WotlkClient.Network;
+using WotlkClient.Shared;
 using WotlkClient.Terrain;
 
 namespace WotlkClient.Clients
@@ -44,6 +37,7 @@ namespace WotlkClient.Clients
         private byte[] mKey;
         public bool Connected;
         string prefix;
+        string master;
 
         //Packet Handling
         private PacketHandler pHandler;
@@ -61,8 +55,9 @@ namespace WotlkClient.Clients
         public Character[] Charlist = new Character[0];
         
 
-        public WorldServerClient(string user, Realm rl, byte[] key, string charName, AuthCompletedCallBack callback)
+        public WorldServerClient(string user, Realm rl, byte[] key, string charName, string _master, AuthCompletedCallBack callback)
         {
+            prefix = user;
             mUsername = user.ToUpper();
             mCharname = charName;
             objectMgr = new ObjectMgr(prefix);
@@ -72,7 +67,7 @@ namespace WotlkClient.Clients
             realm = rl;
             mKey = key;
             authCompletedCallBack = callback;
-            prefix = user;
+            master = _master;
         }
 
         public void Connect()
@@ -158,6 +153,14 @@ namespace WotlkClient.Clients
                 Log.WriteLine(LogType.Packet,"{0}", prefix, packet.ToHex());
                 mSocket.Send(Packet);
             }
+            catch(SocketException se)
+            {
+                Log.WriteLine(LogType.Error, "Exception Occured", prefix);
+                Log.WriteLine(LogType.Error, "Message: {0}", prefix, se.Message);
+                Log.WriteLine(LogType.Error, "Stacktrace: {0}", prefix, se.StackTrace);
+                HardDisconnect();
+                System.Console.WriteLine("Disconnected from server with " + mUsername);
+            }
             catch (Exception ex)
             {
                 Log.WriteLine(LogType.Error, "Exception Occured", prefix);
@@ -169,9 +172,9 @@ namespace WotlkClient.Clients
 
         public void StartHeartbeat()
         {
-            aTimer.Elapsed += new ElapsedEventHandler(Heartbeat);
-            aTimer.Interval = 3000;
-            aTimer.Enabled = true;
+            uTimer.Elapsed += new ElapsedEventHandler(Heartbeat);
+            uTimer.Interval = 3000;
+            uTimer.Enabled = true;
         }
 
         public void HandlePacket(PacketIn packet)

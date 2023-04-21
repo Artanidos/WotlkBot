@@ -51,7 +51,7 @@ namespace WotlkClient.Clients
             }
             else
             {
-                Log.WriteLine(LogType.Error, "M values doesn't match, please try again.", mUsername);
+                Log.WriteLine(LogType.Error, "M values doesn't match, please try again.", prefix);
                 Disconnect();
                 if (authCompletedCallBack != null)
                     authCompletedCallBack(2);
@@ -121,7 +121,7 @@ namespace WotlkClient.Clients
             combatMgr.Start();
             terrainMgr.ChangeMap(chr.MapID);
 
-            Log.WriteLine(LogType.Success, "Logged into world as {0}.", mUsername, chr.Name);
+            Log.WriteLine(LogType.Success, "Logged into world as {0}.", prefix, chr.Name);
             if (charLoginCompletedCallBack != null)
                 charLoginCompletedCallBack(0);
         }
@@ -178,7 +178,7 @@ namespace WotlkClient.Clients
             }
             catch (Exception e)
             {
-                Log.WriteLine(LogType.Error, e.StackTrace, mUsername);
+                Log.WriteLine(LogType.Error, e.StackTrace, prefix);
             }
         }
 

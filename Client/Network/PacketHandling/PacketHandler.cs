@@ -19,17 +19,18 @@ namespace WotlkClient.Clients
         List<PacketHandle> Handles;
         readonly LogonServerClient tClient;
         readonly WorldServerClient wClient;
-        string username;
+        string prefix;
 
-        public PacketHandler(WorldServerClient client, string _username)
+        public PacketHandler(WorldServerClient client, string _prefix)
         {
-            username = _username;
+            prefix = _prefix;
             Handles = new List<PacketHandle>();
             wClient = client;
         }
 
-        public PacketHandler(LogonServerClient client)
+        public PacketHandler(LogonServerClient client, string _prefix)
         {
+            prefix = _prefix;
             Handles = new List<PacketHandle>();
             tClient = client;
         }
@@ -55,7 +56,7 @@ namespace WotlkClient.Clients
                     }
                 }
             }
-            Log.WriteLine(LogType.Success, "Loaded {0} Packet handlers.", username, x);
+            Log.WriteLine(LogType.Success, "Loaded {0} Packet handlers.", prefix, x);
         }
 
         public void HandlePacket(PacketIn packet)
@@ -72,12 +73,12 @@ namespace WotlkClient.Clients
                 {
                     if (packet.PacketId.Service == ServiceType.Logon)
                     {
-                        Log.WriteLine(LogType.Network, "Handling packet: {0}", username, handle.packetId);
+                        Log.WriteLine(LogType.Network, "Handling packet: {0}", prefix, handle.packetId);
                         handle.MethodInfo.Invoke(tClient, obj);
                     }
                     else if (packet.PacketId.Service == ServiceType.World)
                     {
-                        Log.WriteLine(LogType.Network, "Handling packet: {0}", username, handle.packetId);
+                        Log.WriteLine(LogType.Network, "Handling packet: {0}", prefix, handle.packetId);
                         handle.MethodInfo.Invoke(wClient, obj);
                     }
                     //Log.WriteLine(LogType.Packet, packet.ToHex());
