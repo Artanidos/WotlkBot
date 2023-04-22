@@ -15,19 +15,49 @@ namespace WotlkClient.Clients
 {
     partial class WorldServerClient
     {
+        [PacketHandlerAtribute(WorldServerOpCode.SMSG_GROUP_LIST)]
+        public void HandleGroupList(PacketIn inpacket)
+        { 
+            byte type = inpacket.ReadByte();
+            byte slot = inpacket.ReadByte();
+            byte slot_flags = inpacket.ReadByte();
+            byte slot_roles = inpacket.ReadByte();
+            if(type == 8) // GROUPTYPE_LFG
+            {
+                byte finished = inpacket.ReadByte();
+                UInt32 dungeon = inpacket.ReadUInt32();
+            }      
+            UInt64 guid = inpacket.ReadUInt64();
+            UInt32 counter = inpacket.ReadUInt32();
+            UInt32 count = inpacket.ReadUInt32();
+            for (int i = 0; i < count; i++)
+            {
+                string name = inpacket.ReadString();
+                WoWGuid pguid = new WoWGuid(inpacket.ReadUInt64());
+                byte onlineState = inpacket.ReadByte();
+                byte group = inpacket.ReadByte();
+                byte flags = inpacket.ReadByte();
+                byte role = inpacket.ReadByte();
+                
+                Object obj = new Object(pguid);
+                obj.Name = name;
+                objectMgr.addObject(obj);
+                Console.WriteLine("Added player: " + name);
+            }
+        }
+
         [PacketHandlerAtribute(WorldServerOpCode.SMSG_GROUP_INVITE)]
         public void HandleGroupInvite(PacketIn inpacket)
         {
             inpacket.ReadByte();
-            string inviter = inpacket.ReadString();
-            System.Console.WriteLine("Invite from " + inviter);
+            inviteCallBack(inpacket.ReadString());
+        }
 
-            if (inviter == master)
-            {
-                PacketOut packet = new PacketOut(WorldServerOpCode.CMSG_GROUP_ACCEPT);
-                packet.Write((UInt32)0);
-                Send(packet);
-            }
+        public void AcceptInviteRequest()
+        {
+            PacketOut packet = new PacketOut(WorldServerOpCode.CMSG_GROUP_ACCEPT);
+            packet.Write((UInt32)0);
+            Send(packet);
         }
 
 

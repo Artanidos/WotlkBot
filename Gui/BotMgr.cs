@@ -2,6 +2,7 @@
 using System.Threading;
 using WotlkClient.Clients;
 using WotlkClient.Constants;
+using WotlkClient.Terrain;
 
 namespace WotlkBotGui
 {
@@ -11,6 +12,8 @@ namespace WotlkBotGui
         private WorldServerClient worldClient;
         private Bot bot;
         string master;
+        private bool shouldStop = false;
+
         public void Main(Bot bot, string host, int port, string _master)
         {
             master = _master;
@@ -28,18 +31,13 @@ namespace WotlkBotGui
                 System.Console.WriteLine("An error occured: {0}", ex.Message);
             }
 
-            while (true)
+            while (!shouldStop)
             {
-                try
-                {
-                    Thread.Sleep(500);
-                }
-                catch (ThreadAbortException)
-                {
-                    loginClient.Disconnect();
-                    System.Console.WriteLine("Thread has been aborted"); 
-                }    
+                Thread.Sleep(100);       
             }
+            Console.WriteLine("BotMgr ended");
+            loginClient.HardDisconnect();
+            worldClient.HardDisconnect();
         }
 
         public void LoginComplete(uint result)
@@ -48,7 +46,6 @@ namespace WotlkBotGui
             {
                 RealmListCompletedCallBack callback = new RealmListCompletedCallBack(RealmListComplete);
                 loginClient.RequestRealmlist(callback);
-                
             }
             else
                 System.Console.WriteLine("Log in failed");
@@ -67,7 +64,7 @@ namespace WotlkBotGui
                 if (realm != null)
                 {
                     AuthCompletedCallBack callback = new AuthCompletedCallBack(AuthCompleted);
-                    worldClient = new WorldServerClient(bot.AccountName, realm.Value, loginClient.mKey, bot.CharName, master, callback);
+                    worldClient = new WorldServerClient(bot.AccountName, realm.Value, loginClient.mKey, bot.CharName, callback);
                     worldClient.Connect();
                 }
             }
@@ -110,9 +107,40 @@ namespace WotlkBotGui
             if (result == 0)
             {
                 System.Console.WriteLine("Logged into world with " + bot.CharName);
+                InviteCallBack callback = new InviteCallBack(InviteRequest);
+                worldClient.SetInviteCallback(callback);
             }
             else
                 System.Console.WriteLine("Char login failed");
+        }
+
+        public void InviteRequest(string inviter)
+        {
+            if(inviter == master)
+            {
+                worldClient.AcceptInviteRequest();
+                WotlkClient.Clients.Object inv = worldClient.objectMgr.getObject(inviter);
+                if (inv != null)
+                {
+                    Console.WriteLine("found " + inv.Name);
+                    if (inv.Position != null && worldClient.objectMgr.getPlayerObject().Position != null)
+                    {
+                        float dist = TerrainMgr.CalculateDistance(inv.Position, worldClient.objectMgr.getPlayerObject().Position);
+                        if (dist > 1.0)
+                        {
+                            worldClient.movementMgr.Waypoints.Add(worldClient.objectMgr.getPlayerObject().Position);
+                            worldClient.movementMgr.Start();
+                            Console.WriteLine("adding waypoint " + dist.ToString());
+                        }
+                    }
+                }
+            }
+        }
+
+        public void Logout()
+        {
+            worldClient.Logout();
+            shouldStop = true;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Timers;
@@ -11,8 +12,17 @@ using WotlkClient.Terrain;
 
 namespace WotlkClient.Clients
 {
+    public delegate void AuthCompletedCallBack(uint taskResult);
+    public delegate void CharLoginCompletedCallBack(uint taskResult);
+    public delegate void CharEnumCompletedCallBack(uint taskResult);
+    public delegate void InviteCallBack(string inviter);
+
     public partial class WorldServerClient
     {
+        AuthCompletedCallBack authCompletedCallBack;
+        CharEnumCompletedCallBack charEnumCompletedCallBack;
+        CharLoginCompletedCallBack charLoginCompletedCallBack;
+        InviteCallBack inviteCallBack;
 
         private UInt32 ServerSeed;
         private UInt32 ClientSeed;
@@ -37,7 +47,6 @@ namespace WotlkClient.Clients
         private byte[] mKey;
         public bool Connected;
         string prefix;
-        string master;
 
         //Packet Handling
         private PacketHandler pHandler;
@@ -55,7 +64,7 @@ namespace WotlkClient.Clients
         public Character[] Charlist = new Character[0];
         
 
-        public WorldServerClient(string user, Realm rl, byte[] key, string charName, string _master, AuthCompletedCallBack callback)
+        public WorldServerClient(string user, Realm rl, byte[] key, string charName, AuthCompletedCallBack callback)
         {
             prefix = user;
             mUsername = user.ToUpper();
@@ -67,7 +76,17 @@ namespace WotlkClient.Clients
             realm = rl;
             mKey = key;
             authCompletedCallBack = callback;
-            master = _master;
+        }
+
+        public void SetInviteCallback(InviteCallBack callback)
+        {
+            inviteCallBack = callback;
+        }
+
+        public void Logout()
+        {
+            PacketOut ping = new PacketOut(WorldServerOpCode.CMSG_LOGOUT_REQUEST);
+            Send(ping);
         }
 
         public void Connect()

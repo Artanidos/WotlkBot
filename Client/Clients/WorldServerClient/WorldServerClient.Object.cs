@@ -21,52 +21,58 @@ namespace WotlkClient.Clients
 			try
 			{
 				Int32 size = packet.ReadInt32();
-				byte[] decomped = mClient.Shared.Compression.Decompress(size, packet.ReadRemaining());
+				byte[] decomped = WotlkClient.Shared.Compression.Decompress(size, packet.ReadRemaining());
 				packet = new PacketIn(decomped, 1);
 				HandleObjectUpdate(packet);
 			}
 			catch(Exception ex)
 			{
-				Log.WriteLine(LogType.Error, "{1} \n {0}", ex.StackTrace, ex.Message);
+				Log.WriteLine(LogType.Error, "{1} \n {0}", prefix, ex.StackTrace, ex.Message);
 			}
 		}
+        */
+        [PacketHandlerAtribute(WorldServerOpCode.SMSG_UPDATE_OBJECT)]
+        public void HandleObjectUpdate(PacketIn packet)
+        {
+            UInt32 UpdateBlocks = packet.ReadUInt32();
 
-		[PacketHandlerAtribute(WorldServerOpCode.SMSG_UPDATE_OBJECT)]
-		public void HandleObjectUpdate(PacketIn packet)
-		{
-                UInt32 UpdateBlocks = packet.ReadUInt32();
+            for (int allBlocks = 0; allBlocks < UpdateBlocks; allBlocks++)
+            {
+                UpdateType type = (UpdateType)packet.ReadByte();
 
-                for(int allBlocks = 0; allBlocks < UpdateBlocks; allBlocks++)
+                WoWGuid updateGuid;
+                uint updateId;
+                uint fCount;
+
+
+                switch (type)
                 {
-                    UpdateType type = (UpdateType)packet.ReadByte();
-                    
-                    WoWGuid updateGuid;
-                    uint updateId;
-                    uint fCount;
+                    case UpdateType.Values:
+                        Object getObject;
+                        updateGuid = new WoWGuid(packet.ReadUInt64());
+                        Console.WriteLine("HandleObjectUpdate values");
 
-                    switch(type)
-                    {
-                        case UpdateType.Values:
-                            Object getObject;
-                            updateGuid = new WoWGuid(packet.ReadUInt64());
-                            if (objectMgr.objectExists(updateGuid))
-                            {
-                                getObject = objectMgr.getObject(updateGuid);
-                            }
-                            else
-                            {
-                                getObject = new Object(updateGuid);
-                                objectMgr.addObject(getObject);
-                            }
-                            Log.WriteLine(LogType.Normal, "Handling Fields Update for object: {0}", getObject.Guid.ToString());
-                            HandleUpdateObjectFieldBlock(packet, getObject);
-                            objectMgr.updateObject(getObject);
-                            break;
+                        if (objectMgr.objectExists(updateGuid))
+                        {
+                            getObject = objectMgr.getObject(updateGuid);
+                        }
+                        else
+                        {
+                            getObject = new Object(updateGuid);
+                            objectMgr.addObject(getObject);
+                        }
+                        Log.WriteLine(LogType.Normal, "Handling Fields Update for object: {0}", prefix, getObject.Guid.ToString());
+                        HandleUpdateObjectFieldBlock(packet, getObject);
+                        objectMgr.updateObject(getObject);
 
-                        case UpdateType.Create:
-                        case UpdateType.CreateSelf:
-                            updateGuid = new WoWGuid(packet.ReadUInt64());
-                            updateId = packet.ReadByte();
+                        break;
+
+                    case UpdateType.Create:
+                    case UpdateType.CreateSelf:
+                        updateGuid = new WoWGuid(packet.ReadUInt64());
+                        Console.WriteLine("HandleObjectUpdate create " + updateGuid.ToString());
+                        /*
+                        updateId = packet.ReadByte();
                             fCount = GeUpdateFieldsCount(updateId);
 
                             if (objectMgr.objectExists(updateGuid))
@@ -78,31 +84,37 @@ namespace WotlkClient.Clients
                             HandleUpdateMovementBlock(packet, newObject);
                             HandleUpdateObjectFieldBlock(packet, newObject);
                             objectMgr.updateObject(newObject);
-                            Log.WriteLine(LogType.Normal, "Handling Creation of object: {0}", newObject.Guid.ToString());
-                            break;
-                        
-                        case UpdateType.OutOfRange:
+                            Log.WriteLine(LogType.Normal, "Handling Creation of object: {0}", prefix, newObject.Guid.ToString());
+                        */
+                        break;
+
+                    case UpdateType.OutOfRange:
+                        Console.WriteLine("HandleObjectUpdate oor");
+                        /*
                             fCount = packet.ReadByte();
                             for (int j = 0; j < fCount; j++)
                             {
+                                if(packet.Remaining < 8)
+                                    return;
                                 WoWGuid guid = new WoWGuid(packet.ReadUInt64());
-                                Log.WriteLine(LogType.Normal, "Handling delete for object: {0}", guid.ToString());
+                                Log.WriteLine(LogType.Normal, "Handling delete for object: {0}", prefix, guid.ToString());
                                 if (objectMgr.objectExists(guid))
                                     objectMgr.delObject(guid);
                             }
-                            break;
-                    }
+                        */
+                        break;
                 }
-              
+            }
+
         }
-        */
+
 
         public void HandleUpdateMovementBlock(PacketIn packet, Object newObject)
         {
             UInt16 flags = packet.ReadUInt16();
 
 
-            if((flags & 0x20) >= 1)
+            if ((flags & 0x20) >= 1)
             {
                 UInt32 flags2 = packet.ReadUInt32();
                 UInt16 unk1 = packet.ReadUInt16();
@@ -210,7 +222,7 @@ namespace WotlkClient.Clients
         public void HandleUpdateObjectFieldBlock(PacketIn packet, Object newObject)
         {
             uint lenght = packet.ReadByte();
-            
+
             UpdateMask UpdateMask = new UpdateMask();
             UpdateMask.SetCount((ushort)(lenght));
             UpdateMask.SetMask(packet.ReadBytes((int)lenght * 4), (ushort)lenght);
@@ -220,6 +232,8 @@ namespace WotlkClient.Clients
             {
                 if (!UpdateMask.GetBit((ushort)i))
                 {
+                    if (packet.Remaining < 4)
+                        return;
                     UInt32 val = packet.ReadUInt32();
                     newObject.SetField(i, val);
                     Log.WriteLine(LogType.Normal, "Update Field: {0} = {1}", prefix, (UpdateFields)i, val);
@@ -267,101 +281,104 @@ namespace WotlkClient.Clients
         }
 
         public void CreatureQuery(WoWGuid guid, UInt32 entry)
-		{
-			PacketOut packet = new PacketOut(WorldServerOpCode.CMSG_CREATURE_QUERY);
+        {
+            PacketOut packet = new PacketOut(WorldServerOpCode.CMSG_CREATURE_QUERY);
             packet.Write(entry);
-			packet.Write(guid.GetNewGuid());
-			Send(packet);
-		}
-
-		public void ObjectQuery(WoWGuid guid, UInt32 entry)
-		{
-			PacketOut packet = new PacketOut(WorldServerOpCode.CMSG_Object_QUERY);
-			packet.Write(entry);
             packet.Write(guid.GetNewGuid());
-			Send(packet);
-		}
+            Send(packet);
+        }
 
-		public void QueryName(WoWGuid guid)
-		{
-			PacketOut packet = new PacketOut(WorldServerOpCode.CMSG_NAME_QUERY);
+        public void ObjectQuery(WoWGuid guid, UInt32 entry)
+        {
+            PacketOut packet = new PacketOut(WorldServerOpCode.CMSG_Object_QUERY);
+            packet.Write(entry);
             packet.Write(guid.GetNewGuid());
-			Send(packet);
-		}
+            Send(packet);
+        }
 
-		public void QueryName(UInt64 guid)
-		{
-			PacketOut packet = new PacketOut(WorldServerOpCode.CMSG_NAME_QUERY);
-			packet.Write(guid);
-			Send(packet);
-		}
+        public void QueryName(WoWGuid guid)
+        {
+            PacketOut packet = new PacketOut(WorldServerOpCode.CMSG_NAME_QUERY);
+            packet.Write(guid.GetNewGuid());
+            Send(packet);
+        }
+
+        public void QueryName(UInt64 guid)
+        {
+            PacketOut packet = new PacketOut(WorldServerOpCode.CMSG_NAME_QUERY);
+            packet.Write(guid);
+            Send(packet);
+        }
 
         [PacketHandlerAtribute(WorldServerOpCode.SMSG_CREATURE_QUERY_RESPONSE)]
         public void Handle_CreatureQuery(PacketIn packet)
         {
-                Entry entry = new Entry();
-                entry.entry = packet.ReadUInt32();
-                entry.name = packet.ReadString();
-                entry.blarg = packet.ReadBytes(3);
-                entry.subname = packet.ReadString();
-                entry.flags = packet.ReadUInt32();
-                entry.subtype = packet.ReadUInt32();
-                entry.family = packet.ReadUInt32();
-                entry.rank = packet.ReadUInt32();
+            Entry entry = new Entry();
+            entry.entry = packet.ReadUInt32();
+            entry.name = packet.ReadString();
+            entry.blarg = packet.ReadBytes(3);
+            entry.subname = packet.ReadString();
+            entry.flags = packet.ReadUInt32();
+            entry.subtype = packet.ReadUInt32();
+            entry.family = packet.ReadUInt32();
+            entry.rank = packet.ReadUInt32();
 
-                foreach (Object obj in objectMgr.getObjectArray())
+            foreach (Object obj in objectMgr.getObjectArray())
+            {
+                if (obj.Fields != null)
                 {
-                    if (obj.Fields != null)
+                    if (obj.Fields[(int)UpdateFields.OBJECT_FIELD_ENTRY] == entry.entry)
                     {
-                        if (obj.Fields[(int)UpdateFields.OBJECT_FIELD_ENTRY] == entry.entry)
-                        {
-                            obj.Name = entry.name;
-                            objectMgr.updateObject(obj);
-                        }
+                        obj.Name = entry.name;
+                        objectMgr.updateObject(obj);
                     }
                 }
+            }
         }
 
 
-		[PacketHandlerAtribute(WorldServerOpCode.SMSG_NAME_QUERY_RESPONSE)]
-		public  void Handle_NameQuery(PacketIn packet)
-		{
-
-                WoWGuid guid = new WoWGuid(packet.ReadUInt64());
-                string name = packet.ReadString();
-                packet.ReadByte();
-                Race Race = (Race)packet.ReadUInt32();
-                Gender Gender = (Gender)packet.ReadUInt32();
-                Classname Class = (Classname)packet.ReadUInt32();
+        [PacketHandlerAtribute(WorldServerOpCode.SMSG_NAME_QUERY_RESPONSE)]
+        public void Handle_NameQuery(PacketIn packet)
+        {
+            if (packet.Remaining < 8)
+                return;
+            WoWGuid guid = new WoWGuid(packet.ReadUInt64());
+            if (packet.Remaining == 0)
+                return;
+            string name = packet.ReadString();
+            packet.ReadByte();
+            Race Race = (Race)packet.ReadUInt32();
+            Gender Gender = (Gender)packet.ReadUInt32();
+            Classname Class = (Classname)packet.ReadUInt32();
 
             System.Console.WriteLine("Handle_NameQuery: " + name);
 
-                if (objectMgr.objectExists(guid))    // Update existing Object
-                {
-                    Object obj = objectMgr.getObject(guid);
-                    obj.Name = name;
-                    objectMgr.updateObject(obj);
-                }
-                else                // Create new Object        -- FIXME: Add to new 'names only' list?
-                {
-                    Object obj = new Object(guid);
-                    obj.Name = name;
-                    objectMgr.addObject(obj);
+            if (objectMgr.objectExists(guid))    // Update existing Object
+            {
+                Object obj = objectMgr.getObject(guid);
+                obj.Name = name;
+                objectMgr.updateObject(obj);
+            }
+            else                // Create new Object        -- FIXME: Add to new 'names only' list?
+            {
+                Object obj = new Object(guid);
+                obj.Name = name;
+                objectMgr.addObject(obj);
 
-                    /* Process chat message if we looked them up now */
-                    for (int i = 0; i < ChatQueued.Count; i++)
+                /* Process chat message if we looked them up now */
+                for (int i = 0; i < ChatQueued.Count; i++)
+                {
+                    ChatQueue message = (ChatQueue)ChatQueued[i];
+                    if (message.GUID.GetOldGuid() == guid.GetOldGuid())
                     {
-                        ChatQueue message = (ChatQueue)ChatQueued[i];
-                        if (message.GUID.GetOldGuid() == guid.GetOldGuid())
-                        {
-                            Log.WriteLine(LogType.Chat, "[{1}] {0}", mUsername, message.Message, name);
-                            ChatQueued.Remove(message);
-                        }
+                        Log.WriteLine(LogType.Chat, "[{1}] {0}", mUsername, message.Message, name);
+                        ChatQueued.Remove(message);
                     }
-
                 }
-		}
-        
+
+            }
+        }
+
     }
 
 }

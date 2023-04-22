@@ -68,6 +68,10 @@ namespace WotlkClient.Clients
                 System.Console.WriteLine("MONSTER_MOVE " + obj.Name);
                 obj.Position = new Coordinate(packet.ReadFloat(), packet.ReadFloat(), packet.ReadFloat());
             }
+            else
+            {
+                QueryName(guid);
+            }
         }
 
         void Heartbeat(object source, ElapsedEventArgs e)

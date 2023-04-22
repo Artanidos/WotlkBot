@@ -107,7 +107,6 @@
             this.textBoxHost.Name = "textBoxHost";
             this.textBoxHost.Size = new System.Drawing.Size(255, 22);
             this.textBoxHost.TabIndex = 3;
-            this.textBoxHost.Text = "127.0.0.1";
             this.textBoxHost.TextChanged += new System.EventHandler(this.textBoxHost_TextChanged);
             // 
             // listBoxBots

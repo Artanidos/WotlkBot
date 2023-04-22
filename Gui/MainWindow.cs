@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -8,7 +9,7 @@ namespace WotlkBotGui
     public partial class MainWindow : Form
     {
         private Database db;
-        private List<Thread> threads = new List<Thread>();
+        private List<BotMgr> bots = new List<BotMgr>();
         public MainWindow()
         {
             InitializeComponent();
@@ -30,7 +31,7 @@ namespace WotlkBotGui
                 {
                     BotMgr bm = new BotMgr();
                     Thread t = new Thread(() => bm.Main(b, textBoxHost.Text, 3724, textBoxMaster.Text));
-                    threads.Add(t);
+                    bots.Add(bm);
                     t.Start();
                 }
             }
@@ -39,6 +40,9 @@ namespace WotlkBotGui
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
+            textBoxMaster.Text = db.GetMaster();
+            textBoxHost.Text = db.GetHost();
+
             Cls[] values = (Cls[])Enum.GetValues(typeof(Cls));
 
             foreach (Cls value in values)
@@ -147,22 +151,25 @@ namespace WotlkBotGui
 
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
-           KillThreads();
+            db.UpdateConfig(textBoxHost.Text, textBoxMaster.Text);
+            Logout();
         }
 
         private void buttonStop_Click(object sender, EventArgs e)
         {
             buttonStop.Enabled = false;
-            KillThreads();
+            Logout();
             buttonStart.Enabled = true;
         }
 
-        private void KillThreads()
+        private void Logout()
         {
-            foreach (Thread t in threads)
+            Console.WriteLine("Logout");
+            foreach (BotMgr bm in bots)
             {
-                t.Abort();
+                bm.Logout();
             }
+            bots.Clear();
         }
     }
 }

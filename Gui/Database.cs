@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static IronPython.Modules._ast;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static WotlkBotGui.Database;
 
 namespace WotlkBotGui
 {
@@ -37,6 +38,7 @@ namespace WotlkBotGui
             using (var con = new SqliteConnection(cs))
             {
                 con.Open();
+                
                 SqliteCommand cmd = con.CreateCommand();
                 cmd.CommandText = "CREATE TABLE IF NOT EXISTS bots (" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -45,6 +47,58 @@ namespace WotlkBotGui
                     "password TEXT, " +
                     "script TEXT, " +
                     "class INT)";
+                cmd.ExecuteNonQuery();
+
+                cmd.CommandText = "CREATE TABLE IF NOT EXISTS config (id INTEGER PRIMARY KEY AUTOINCREMENT, host TEXT, master TEXT)";
+                cmd.ExecuteNonQuery();
+
+                con.Close();
+            }
+        }
+
+        public string GetMaster()
+        {
+            string master = "";
+            using (var con = new SqliteConnection(cs))
+            {
+                con.Open();
+                string sql = "SELECT master FROM config";
+                var cmd = con.CreateCommand();
+                cmd.CommandText = sql;
+                SqliteDataReader rdr = cmd.ExecuteReader();
+                if (rdr.Read())
+                    master = rdr.GetString(0);
+            }
+            return master; 
+        }
+
+        public string GetHost()
+        {
+            string host = "";
+            using (var con = new SqliteConnection(cs))
+            {
+                con.Open();
+                string sql = "SELECT host FROM config";
+                var cmd = con.CreateCommand();
+                cmd.CommandText = sql;
+                SqliteDataReader rdr = cmd.ExecuteReader();
+                if (rdr.Read())
+                    host = rdr.GetString(0);
+            }
+            return host;
+        }
+
+        public void UpdateConfig(string host, string master)
+        {
+            using (var con = new SqliteConnection(cs))
+            {
+                con.Open();
+                string sql = "REPLACE INTO config (id, master, host) VALUES(1, @master,@host)";
+                var cmd = con.CreateCommand();
+                cmd.CommandText = sql;
+                cmd.Parameters.AddWithValue("@master", master);
+                cmd.Parameters.AddWithValue("@host", host);
+                cmd.Prepare();
                 cmd.ExecuteNonQuery();
                 con.Close();
             }
@@ -99,6 +153,7 @@ namespace WotlkBotGui
 
                 cmd.CommandText = "SELECT last_insert_rowid()";
                 bot.ID = Convert.ToInt32(cmd.ExecuteScalar());
+                con.Close();
             }
             
             return bot;
@@ -122,6 +177,7 @@ namespace WotlkBotGui
                 cmd.Prepare();
 
                 cmd.ExecuteNonQuery();
+                con.Close();
             }
         }
 
@@ -137,6 +193,7 @@ namespace WotlkBotGui
                 cmd.Prepare();
 
                 cmd.ExecuteNonQuery();
+                con.Close();
             }
         }
     }

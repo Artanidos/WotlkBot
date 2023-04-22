@@ -14,16 +14,8 @@ using System.Runtime.Remoting.Messaging;
 
 namespace WotlkClient.Clients
 {
-    public delegate void AuthCompletedCallBack(uint taskResult);
-    public delegate void CharLoginCompletedCallBack(uint taskResult);
-    public delegate void CharEnumCompletedCallBack(uint taskResult);
-
     partial class WorldServerClient
     {
-        AuthCompletedCallBack authCompletedCallBack;
-        CharEnumCompletedCallBack charEnumCompletedCallBack;
-        CharLoginCompletedCallBack charLoginCompletedCallBack;
-
         [PacketHandlerAtribute(WorldServerOpCode.SMSG_AUTH_CHALLENGE)]
         public void HandleAuthChallange(PacketIn packet)
         {
