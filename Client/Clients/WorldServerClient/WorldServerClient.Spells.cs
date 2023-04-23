@@ -12,6 +12,38 @@ namespace WotlkClient.Clients
 {
     public partial class WorldServerClient
     {
+        static void AppendPackedGuid(UInt64 guid, PacketOut stream)
+        {
+            byte[] packGuid = new byte[9];
+            packGuid[0] = 0;
+            int size = 1;
+
+            for (byte i = 0; guid != 0; i++)
+            {
+                if ((guid & 0xFF) != 0)
+                {
+                    packGuid[0] |= (byte)(1 << i);
+                    packGuid[size] = (byte)(guid & 0xFF);
+                    size++;
+                }
+
+                guid >>= 8;
+            }
+            stream.Write(packGuid, 0, size);
+        }
+
+        public void CastSpell(UInt64 guid, UInt32 spellId)
+        {
+            PacketOut packet = new PacketOut(WorldServerOpCode.CMSG_CAST_SPELL);
+            packet.Write((byte)1); // count
+            packet.Write((UInt32)spellId);
+            packet.Write((byte)0); // flags
+            packet.Write((UInt32)2); // TARGET_FLAG_UNIT
+            AppendPackedGuid(guid, packet);
+            Send(packet);
+        }
+
+        /*
         public void CastSpell(Object target, UInt32 SpellId)
         {
             SpellTargetFlags flags = 0;
@@ -64,6 +96,6 @@ namespace WotlkClient.Clients
 
             Send(packet);
         }
-
+        */
      }
 }

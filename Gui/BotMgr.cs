@@ -37,7 +37,8 @@ namespace WotlkBotGui
             }
             Console.WriteLine("BotMgr ended");
             loginClient.HardDisconnect();
-            worldClient.HardDisconnect();
+            if(worldClient != null)
+                worldClient.HardDisconnect();
         }
 
         public void LoginComplete(uint result)
@@ -139,7 +140,8 @@ namespace WotlkBotGui
 
         public void Logout()
         {
-            worldClient.Logout();
+            if(worldClient != null)
+                worldClient.Logout();
             shouldStop = true;
         }
     }

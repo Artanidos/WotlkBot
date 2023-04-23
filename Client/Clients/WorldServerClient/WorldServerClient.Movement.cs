@@ -16,6 +16,22 @@ namespace WotlkClient.Clients
 {
     public partial class WorldServerClient
     {
+        public void MoveForward()
+        {
+            PacketOut packet = new PacketOut(WorldServerOpCode.MSG_MOVE_START_FORWARD);
+            AppendPackedGuid(objectMgr.getPlayerObject().Guid.GetOldGuid(), packet);
+            // add new position
+            Send(packet);
+        }
+
+        public void MoveStop()
+        {
+            PacketOut packet = new PacketOut(WorldServerOpCode.MSG_MOVE_STOP);
+            AppendPackedGuid(objectMgr.getPlayerObject().Guid.GetOldGuid(), packet);
+            // add new position
+            Send(packet);
+        }
+
 
         [PacketHandlerAtribute(WorldServerOpCode.MSG_MOVE_START_FORWARD)]
         [PacketHandlerAtribute(WorldServerOpCode.MSG_MOVE_START_BACKWARD)]

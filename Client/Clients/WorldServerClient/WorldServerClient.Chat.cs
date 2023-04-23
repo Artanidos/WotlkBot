@@ -9,6 +9,9 @@ using System.Text.RegularExpressions;
 using WotlkClient.Shared;
 using WotlkClient.Network;
 using WotlkClient.Constants;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace WotlkClient.Clients
 {
@@ -16,10 +19,33 @@ namespace WotlkClient.Clients
     {
         private ArrayList ChatQueued = new ArrayList();
 
+        private void HandleBotCommand(string message, UInt64 user)
+        {
+            
+            string cmd = message.Substring(4, message.Length - 5);
+            Console.WriteLine("bot " + cmd);
+            if (cmd == "move forward")
+            {
+                MoveForward();
+            }
+            else if(cmd == "move stop")
+            {
+                MoveStop();
+            }
+            else if(cmd == "heal me")
+            {
+                CastSpell(user, 2050); // LESSER_HEAL
+            }
+            else if (cmd == "buff me")
+            {
+                CastSpell(user, 1243); // PW_FORTITUDE
+            }
+        }
+
         [PacketHandlerAtribute(WorldServerOpCode.SMSG_CHANNEL_NOTIFY)]
         public void HandleChannelNotify(PacketIn packet)
         {
-            Log.WriteLine(LogType.Success, "Dostalem takie gowno: {0}", prefix, packet.ReadByte());
+            
         }
 
         [PacketHandlerAtribute(WorldServerOpCode.SMSG_MESSAGECHAT)]
@@ -27,7 +53,6 @@ namespace WotlkClient.Clients
         {
             try
             {
-                
                 string channel = null;
                 UInt64 guid = 0;
                 WoWGuid fguid = null, fguid2 = null;
@@ -51,11 +76,6 @@ namespace WotlkClient.Clients
 
                 UInt32 Length = packet.ReadUInt32();
                 string Message = Encoding.Default.GetString(packet.ReadBytes((int)Length));
-                
-                //Message = Regex.Replace(Message, @"\|H[a-zA-z0-9:].|h", ""); // Why do i should need spells and quest linked? ;>
-                Message = Regex.Replace(Message, @"\|[rc]{1}[a-zA-z0-9]{0,8}", ""); // Colorfull chat message also isn't the most important thing.
-
-                
 
                 byte afk = 0;
            
@@ -67,12 +87,18 @@ namespace WotlkClient.Clients
                 {
                     if (objectMgr.objectExists(fguid))
                         username = objectMgr.getObject(fguid).Name;
+
                 }
-                System.Console.WriteLine(username + ": " + Message);
+
+                if (Message.StartsWith("bot ") && (ChatMsg)Type == ChatMsg.Whisper)
+                {
+                    Console.WriteLine("guid " + guid.ToString());
+                    HandleBotCommand(Message, guid);
+                    return;
+                }
 
                 if (username == null)
                 {
-                    
                     ChatQueue que = new ChatQueue();
                     que.GUID = fguid;
                     que.Type = Type;

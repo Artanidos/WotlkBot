@@ -1,0 +1,3 @@
+recv [Player: Art GUID Full: 0x0000000000000001 Type: Player Low: 1, Account: 2], [CMSG_MESSAGECHAT 0x0095 (149)]           *****
+send [Player: Nebulus GUID Full: 0x0000000000000017 Type: Player Low: 23, Account: 4], [SMSG_MESSAGECHAT 0x0096 (150)]      *****
+send [Player: Art GUID Full: 0x0000000000000001 Type: Player Low: 1, Account: 2], [SMSG_MESSAGECHAT 0x0096 (150)]           *****

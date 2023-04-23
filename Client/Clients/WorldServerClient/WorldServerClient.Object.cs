@@ -347,6 +347,8 @@ namespace WotlkClient.Clients
                 return;
             string name = packet.ReadString();
             packet.ReadByte();
+            if (packet.Remaining < 4)
+                return;
             Race Race = (Race)packet.ReadUInt32();
             Gender Gender = (Gender)packet.ReadUInt32();
             Classname Class = (Classname)packet.ReadUInt32();

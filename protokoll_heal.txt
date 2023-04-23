@@ -1,0 +1,6 @@
+
+recv [Player: Art GUID Full: 0x0000000000000001 Type: Player Low: 1, Account: 2], [CMSG_CAST_SPELL 0x012E (302)]        ******
+send [Player: Art GUID Full: 0x0000000000000001 Type: Player Low: 1, Account: 2], [SMSG_SPELL_START 0x0131 (305)]       ******
+---
+send [Player: Art GUID Full: 0x0000000000000001 Type: Player Low: 1, Account: 2], [SMSG_SPELL_GO 0x0132 (306)]          ******
+send [Player: Art GUID Full: 0x0000000000000001 Type: Player Low: 1, Account: 2], [SMSG_SPELLHEALLOG 0x0150 (336)]      ******
