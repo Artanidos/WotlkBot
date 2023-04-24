@@ -12,7 +12,7 @@ namespace WotlkClient.Clients
 {
     public partial class WorldServerClient
     {
-        static void AppendPackedGuid(UInt64 guid, PacketOut stream)
+        public static void AppendPackedGuid(UInt64 guid, PacketOut stream)
         {
             byte[] packGuid = new byte[9];
             packGuid[0] = 0;
@@ -31,6 +31,28 @@ namespace WotlkClient.Clients
             }
             stream.Write(packGuid, 0, size);
         }
+
+
+        public static UInt64 UnpackGuid(PacketIn stream)
+        {
+            UInt64 guid = 0;
+
+            byte guidmark = stream.ReadByte();
+            byte shift = 0;
+
+
+            for (int i = 0; i < 8 && stream.Remaining > 0; i++)
+            {
+                if ((guidmark & (1 << i)) != 0)
+                {
+                    guid |= ((UInt64)stream.ReadByte()) << shift;
+                    shift += 8;
+                }
+            }
+
+            return guid;
+        }
+
 
         public void CastSpell(UInt64 guid, UInt32 spellId)
         {

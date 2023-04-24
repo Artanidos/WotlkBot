@@ -42,10 +42,10 @@ namespace WotlkClient.Network
 			while (true)
 			{
                 byte b;
-                //if (Remaining > 0)
+                if (Remaining > 0)
                     b = ReadByte();
-                //else
-                //   b = 0;
+                else
+                   b = 0;
 
 				if (b == 0) break;
 				sb.Append((char)b);

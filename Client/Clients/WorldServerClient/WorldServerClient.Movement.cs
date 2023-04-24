@@ -16,6 +16,12 @@ namespace WotlkClient.Clients
 {
     public partial class WorldServerClient
     {
+        // forward flag   flag2    time            pos.x       pos.y           pos.z       pos.o
+        // 01 00 00 00 - 00 00 - 48 36 5f 17 - 13 82 0b c6 - 1c a3 fe c2 - d1 c8 a3 42 - 3d d8 93 40 - 00 00 00 00
+        // stop
+        // 00 00 00 00 - 00 00 - 14 38 5f 17 - 43 83 0b c6 - 5f 86 02 c3 - 80 25 a4 42 - 3d d8 93 40 - 00 00 00 00
+        // 01 = MOVEMENTFLAG_FORWARD
+        // 00 = MOVEMENTFLAG_NONE
         public void MoveForward()
         {
             PacketOut packet = new PacketOut(WorldServerOpCode.MSG_MOVE_START_FORWARD);

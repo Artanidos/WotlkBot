@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Threading;
 using System.Windows.Forms;
+using WotlkClient.Network;
 
 namespace WotlkBotGui
 {

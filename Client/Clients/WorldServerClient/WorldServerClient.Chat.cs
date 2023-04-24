@@ -12,6 +12,7 @@ using WotlkClient.Constants;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices.ComTypes;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 
 namespace WotlkClient.Clients
 {
@@ -39,6 +40,25 @@ namespace WotlkClient.Clients
             else if (cmd == "buff me")
             {
                 CastSpell(user, 1243); // PW_FORTITUDE
+            }
+            else if(cmd == "follow me")
+            {
+                // not working yet, because player is not known
+                WoWGuid fguid = new WoWGuid(user);
+                if (objectMgr.objectExists(fguid))
+                {
+                    Console.WriteLine("found player in objectMgr " + objectMgr.getObject(fguid).Position + ", " + objectMgr.getPlayerObject().Position);
+                    if (objectMgr.getObject(fguid).Position != null && objectMgr.getPlayerObject().Position != null)
+                    {
+
+                        movementMgr.Waypoints.Add(objectMgr.getObject(fguid).Position);
+                    }
+
+                }
+                
+                QueryName(fguid);
+                QueryName(objectMgr.getPlayerObject().Guid);
+                
             }
         }
 
@@ -87,7 +107,6 @@ namespace WotlkClient.Clients
                 {
                     if (objectMgr.objectExists(fguid))
                         username = objectMgr.getObject(fguid).Name;
-
                 }
 
                 if (Message.StartsWith("bot ") && (ChatMsg)Type == ChatMsg.Whisper)
