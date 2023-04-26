@@ -13,33 +13,23 @@ namespace WotlkClient.Clients
     /// <summary>Keeps track of the world. Keeps track of all Objects, including the player as well as providing methods to move (or warp) the player and provides collision detection and pathing.</summary>
     public class ObjectMgr
     {
-        public UInt32 MapID;
-        public WoWGuid playerGuid;
+        private static ObjectMgr instance;
         private List<Object> mObjects;
-        string prefix;
-        public ObjectMgr(string _prefix)
-        {
-            mObjects = new List<Object>();
-            prefix = _prefix;
+
+        private ObjectMgr() 
+        { 
+            mObjects = new List<Object>(); 
         }
 
-        public Object getPlayerObject()
+        public static ObjectMgr GetInstance()
         {
-            int index = getObjectIndex(playerGuid);
-            if (index == -1)
-            {
-                Object obj = new Object(playerGuid);
-                addObject(obj);
-                return obj;
-                
-            }
-            else
-                return mObjects[index];
+            if(instance == null)
+                instance = new ObjectMgr();
+            return instance;
         }
 
         public void addObject(Object obj)
         {
-            Log.WriteLine(LogType.Debug, "Object created: {0}", prefix, obj.Guid.GetOldGuid());
             int index = getObjectIndex(obj.Guid);
             if (index != -1)
             {
@@ -48,23 +38,15 @@ namespace WotlkClient.Clients
             else
             {
                 mObjects.Add(obj);
-                Object[] test = new Object[1];
-                test[0] = obj;
-                //Event m2 = new Event(EventType.EVENT_ADD_OBJECT, "0", test);
-                //mCore.Event(m2);
             }
         }
 
         public void updateObject(Object obj)
         {
-            Log.WriteLine(LogType.Debug, "Object updated: {0}", prefix, obj.Guid.GetOldGuid());
             int index = getObjectIndex(obj.Guid);
             if (index != -1)
             {
                 mObjects[index] = obj;
-                Object[] test = new Object[1];
-                test[0] = obj;
-             
             }
             else
             {
@@ -129,34 +111,6 @@ namespace WotlkClient.Clients
             return closest;
         }
 
-        public Object getNearestObject()
-        {
-            Object[] list = getObjectArray();
-            Object closest = null;
-            float dist;
-            float mindist = 9999999999;
-
-            if (list.Length < 1)
-            {
-                return null;
-            }
-
-            foreach (Object obj2 in list)
-            {
-                if (obj2.Guid.GetOldGuid() != playerGuid.GetOldGuid())
-                {
-                    dist = TerrainMgr.CalculateDistance(getPlayerObject().Position, obj2.Position);
-                    if (dist < mindist)
-                    {
-                        mindist = dist;
-                        closest = obj2;
-                    }
-                }
-            }
-
-            return closest;
-        }
-
         public ObjectType getObjectType(WoWGuid guid)
         {
             int index = getObjectIndex(guid);
@@ -197,5 +151,4 @@ namespace WotlkClient.Clients
             return mObjects.ToArray();
         }
     }
-
 }

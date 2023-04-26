@@ -107,12 +107,12 @@ namespace WotlkBotGui
         {
             if (result == 0)
             {
-                System.Console.WriteLine("Logged into world with " + bot.CharName);
+                Console.WriteLine("Logged into world with " + bot.CharName);
                 InviteCallBack callback = new InviteCallBack(InviteRequest);
                 worldClient.SetInviteCallback(callback);
             }
             else
-                System.Console.WriteLine("Char login failed");
+                Console.WriteLine("Char login failed");
         }
 
         public void InviteRequest(string inviter)
@@ -120,21 +120,22 @@ namespace WotlkBotGui
             if(inviter == master)
             {
                 worldClient.AcceptInviteRequest();
-                WotlkClient.Clients.Object inv = worldClient.objectMgr.getObject(inviter);
+                WotlkClient.Clients.Object inv = ObjectMgr.GetInstance().getObject(inviter);
+                /*
                 if (inv != null)
                 {
                     Console.WriteLine("found " + inv.Name);
-                    if (inv.Position != null && worldClient.objectMgr.getPlayerObject().Position != null)
+                    if (inv.Position != null && worldClient.player.Position != null)
                     {
-                        float dist = TerrainMgr.CalculateDistance(inv.Position, worldClient.objectMgr.getPlayerObject().Position);
+                        float dist = TerrainMgr.CalculateDistance(inv.Position, worldClient.player.Position);
                         if (dist > 1.0)
                         {
-                            worldClient.movementMgr.Waypoints.Add(worldClient.objectMgr.getPlayerObject().Position);
+                            worldClient.movementMgr.Waypoints.Add(worldClient.player.Position);
                             worldClient.movementMgr.Start();
                             Console.WriteLine("adding waypoint " + dist.ToString());
                         }
                     }
-                }
+                }*/
             }
         }
 

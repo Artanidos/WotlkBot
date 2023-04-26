@@ -417,4 +417,26 @@ namespace WotlkClient.Constants
         GAMEOBJECT_PARENTROTATION_03 = OBJECT_END + 0x0007 ,
         FIELDS_MAX
     }
+
+    public enum UpdateFieldType
+    {
+        Default, // Old formatting - Uint/Float - Supports variable length
+        Guid, // Must be 64-bit or 128-bit
+        Quaternion, // 4x float
+        PackedQuaternion, // ulong
+        Uint, // Supports variable length
+        Int, // Supports variable length
+        Float, // Supports variable length
+        Bytes,  // Supports variable length
+        Short,
+        Custom
+    }
+
+    public class UpdateFieldInfo
+    {
+        public int Value;
+        public string Name;
+        public int Size;
+        public UpdateFieldType Format;
+    }
 }

@@ -54,7 +54,7 @@ namespace WotlkClient.Clients
         public PacketCrypt mCrypt;
         
         //Managers
-        public ObjectMgr objectMgr = null;
+        
         public MovementMgr movementMgr = null;
         public CombatMgr combatMgr = null;
         public TerrainMgr terrainMgr = null;
@@ -62,20 +62,25 @@ namespace WotlkClient.Clients
         //
         public Realm realm;
         public Character[] Charlist = new Character[0];
-        
+
+        public Object player = null;
 
         public WorldServerClient(string user, Realm rl, byte[] key, string charName, AuthCompletedCallBack callback)
         {
             prefix = user;
             mUsername = user.ToUpper();
             mCharname = charName;
-            objectMgr = new ObjectMgr(prefix);
+            terrainMgr = new TerrainMgr(prefix);
             movementMgr = new MovementMgr(this, prefix);
             combatMgr = new CombatMgr(this, prefix);
-            terrainMgr = new TerrainMgr(prefix);
             realm = rl;
             mKey = key;
             authCompletedCallBack = callback;
+        }
+
+        public WorldServerClient()
+        {
+
         }
 
         public void SetInviteCallback(InviteCallBack callback)
@@ -224,6 +229,44 @@ namespace WotlkClient.Clients
         ~WorldServerClient()
         {
             HardDisconnect();
+        }
+
+        void AppendPackedGuid(UInt64 guid, PacketOut stream)
+        {
+            byte[] packGuid = new byte[9];
+            packGuid[0] = 0;
+            int size = 1;
+
+            for (byte i = 0; guid != 0; i++)
+            {
+                if ((guid & 0xFF) != 0)
+                {
+                    packGuid[0] |= (byte)(1 << i);
+                    packGuid[size] = (byte)(guid & 0xFF);
+                    size++;
+                }
+                guid >>= 8;
+            }
+            stream.Write(packGuid, 0, size);
+        }
+
+
+        UInt64 UnpackGuid(PacketIn stream)
+        {
+            UInt64 guid = 0;
+
+            byte guidmark = stream.ReadByte();
+            byte shift = 0;
+
+            for (int i = 0; i < 8 && stream.Remaining > 0; i++)
+            {
+                if ((guidmark & (1 << i)) != 0)
+                {
+                    guid |= ((UInt64)stream.ReadByte()) << shift;
+                    shift += 8;
+                }
+            }
+            return guid;
         }
     }
 }

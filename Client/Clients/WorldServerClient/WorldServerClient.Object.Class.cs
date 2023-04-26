@@ -29,6 +29,7 @@ namespace WotlkClient.Clients
         public Object(WoWGuid guid)
         {
             this.Guid = guid;
+            Fields = new UInt32[2000];
         }
 
         public void SetPlayer(Character character)
@@ -45,8 +46,5 @@ namespace WotlkClient.Clients
         {
             Fields[x] = value;
         }
-
-        
-
     }
 }

@@ -38,11 +38,19 @@ namespace WotlkClient.Clients
                 byte group = inpacket.ReadByte();
                 byte flags = inpacket.ReadByte();
                 byte role = inpacket.ReadByte();
-                
-                Object obj = new Object(pguid);
+                Object obj;
+                if (ObjectMgr.GetInstance().objectExists(pguid))
+                {
+                    obj = ObjectMgr.GetInstance().getObject(pguid);
+                }
+                else
+                {
+                    obj = new Object(pguid);
+                    ObjectMgr.GetInstance().addObject(obj);
+                }
                 obj.Name = name;
-                objectMgr.addObject(obj);
-                Console.WriteLine("Added player: " + name);
+                ObjectMgr.GetInstance().updateObject(obj);
+                Console.WriteLine("group list " + name);
             }
         }
 

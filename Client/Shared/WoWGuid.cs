@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections;
+using WotlkClient.Constants;
 
 namespace WotlkClient.Shared
 {
@@ -168,6 +169,36 @@ namespace WotlkClient.Shared
 
             fieldcount = BitCount8(guidmask);
         }
+
+        public HighGuid GetHigh()
+        {
+            return (HighGuid)((oldguid >> 48) & 0x0000FFFF);
+        }
+
+        public ObjectType GetTypeId()
+        { 
+            return GetTypeId(GetHigh());
+        }
+
+        static ObjectType GetTypeId(HighGuid high)
+        {
+            switch (high)
+            {
+                case HighGuid.Item: return ObjectType.Item;
+                case HighGuid.Unit: return ObjectType.Unit;
+                case HighGuid.Pet: return ObjectType.Unit;
+                case HighGuid.Player: return ObjectType.Player;
+                case HighGuid.GameObject: return ObjectType.GameObject;
+                case HighGuid.DynamicObject: return ObjectType.DynamicObject;
+                case HighGuid.Corpse: return ObjectType.Corpse;
+                case HighGuid.Mo_Transport: return ObjectType.GameObject;
+                case HighGuid.Vehicle: return ObjectType.Unit;
+                case HighGuid.Instance:
+                case HighGuid.Group:
+                default: return ObjectType.Object;
+            }
+        }
+
 
         public override string ToString()
         {

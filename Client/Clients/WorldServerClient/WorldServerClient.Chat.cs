@@ -42,23 +42,17 @@ namespace WotlkClient.Clients
                 CastSpell(user, 1243); // PW_FORTITUDE
             }
             else if(cmd == "follow me")
-            {
-                // not working yet, because player is not known
+            {   
                 WoWGuid fguid = new WoWGuid(user);
-                if (objectMgr.objectExists(fguid))
+                if (ObjectMgr.GetInstance().objectExists(fguid))
                 {
-                    Console.WriteLine("found player in objectMgr " + objectMgr.getObject(fguid).Position + ", " + objectMgr.getPlayerObject().Position);
-                    if (objectMgr.getObject(fguid).Position != null && objectMgr.getPlayerObject().Position != null)
+                    if (ObjectMgr.GetInstance().getObject(fguid).Position != null && player != null && player.Position != null)
                     {
-
-                        movementMgr.Waypoints.Add(objectMgr.getObject(fguid).Position);
+                        movementMgr.Waypoints.Add(ObjectMgr.GetInstance().getObject(fguid).Position);
+                        movementMgr.Start();
+                        Console.WriteLine("follow");
                     }
-
                 }
-                
-                QueryName(fguid);
-                QueryName(objectMgr.getPlayerObject().Guid);
-                
             }
         }
 
@@ -105,8 +99,8 @@ namespace WotlkClient.Clients
                 }
                 else
                 {
-                    if (objectMgr.objectExists(fguid))
-                        username = objectMgr.getObject(fguid).Name;
+                    if (ObjectMgr.GetInstance().objectExists(fguid))
+                        username = ObjectMgr.GetInstance().getObject(fguid).Name;
                 }
 
                 if (Message.StartsWith("bot ") && (ChatMsg)Type == ChatMsg.Whisper)

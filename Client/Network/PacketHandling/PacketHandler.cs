@@ -81,16 +81,15 @@ namespace WotlkClient.Clients
                         Log.WriteLine(LogType.Network, "Handling packet: {0}", prefix, handle.packetId);
                         handle.MethodInfo.Invoke(wClient, obj);
                     }
-                    //Log.WriteLine(LogType.Packet, packet.ToHex());
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                 }
 
             }
             else
             {
-                //Log.WriteLine(LogType.Normal, "Unhandled packet: {0}", packet.PacketId.ToString());
+                Log.WriteLine(LogType.Normal, "Unhandled packet: {0}", prefix, packet.PacketId.ToString());
             }
         }
 

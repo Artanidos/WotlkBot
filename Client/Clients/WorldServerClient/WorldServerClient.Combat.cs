@@ -15,14 +15,14 @@ namespace WotlkClient.Clients
         public void Attack(Object target)
         {
             PacketOut packet = new PacketOut(WorldServerOpCode.CMSG_SET_SELECTION);
-            if (objectMgr.getPlayerObject() != null)
+            if (player != null)
             {
                 packet.Write(target.Guid.GetNewGuid());
             }
             Send(packet);
 
             packet = new PacketOut(WorldServerOpCode.CMSG_ATTACKSWING);
-            if (objectMgr.getPlayerObject() != null)
+            if (player != null)
             {
                 packet.Write(target.Guid.GetNewGuid());
             }

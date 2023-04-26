@@ -179,7 +179,7 @@ namespace WotlkClient.Network
                 int size = ((SizeBytes[0] * 256) + SizeBytes[1]);
                 return size;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return 0;
             }

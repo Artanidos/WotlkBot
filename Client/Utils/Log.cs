@@ -13,7 +13,8 @@ namespace WotlkClient.Shared
             {
                 try
                 {
-                    format = string.Format("[{0}][{1}]{2}", Time.GetTime(), type, (string)format);
+                    format = string.Format("[{0}][{1}]{2}", Time.GetTime(), type, format);
+                    
                     string msg = string.Format(format, parameters);
 
                     if (Config.LogToFile)
@@ -58,6 +59,14 @@ namespace WotlkClient.Shared
                             packetFile.Flush();
                             packetFile.Close();
                         }
+                        else if(type == LogType.Normal)
+                        {
+                            StreamWriter packetFile = File.AppendText("logs/" + prefix + "_normal_log.txt");
+                            if (parameters.Length > 0)
+                                packetFile.WriteLine(parameters[0].ToString());
+                            packetFile.Flush();
+                            packetFile.Close();
+                        }
 
                     }
                 }
@@ -65,6 +74,7 @@ namespace WotlkClient.Shared
                 {
                     Console.WriteLine(ex.ToString());
                     Console.WriteLine(ex.StackTrace);
+                    Console.WriteLine(format + ", " + parameters.Length);
                 }
             }
         }

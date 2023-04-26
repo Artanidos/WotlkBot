@@ -5,6 +5,30 @@ using System.Text;
 
 namespace WotlkClient.Constants
 {
+    public enum UpdateTypeModern
+    {
+        Values = 0,
+        CreateObject1 = 1,
+        CreateObject2 = 2,
+    }
+
+    public enum HighGuid
+    {
+        Item           = 0x4000,
+        Container      = 0x4000,
+        Player         = 0x0000,
+        GameObject     = 0xF110,
+        Transport      = 0xF120,
+        Unit           = 0xF130,
+        Pet            = 0xF140,
+        Vehicle        = 0xF150,
+        DynamicObject  = 0xF100,
+        Corpse         = 0xF101,
+        Mo_Transport   = 0x1FC0,
+        Instance       = 0x1F40,
+        Group          = 0x1F50,
+    }
+
     public enum Classname : uint
     {
         Warrior = 1,

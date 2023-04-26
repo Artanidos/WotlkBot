@@ -104,9 +104,9 @@ namespace WotlkClient.Clients
             outpacket.Write(account_data);
             Send(outpacket);
 
-            objectMgr.MapID = chr.MapID;
-            objectMgr.playerGuid = new WoWGuid(chr.GUID);
-            objectMgr.getPlayerObject().SetPlayer(chr);
+            //objectMgr.MapID = chr.MapID;
+            //objectMgr.playerGuid = new WoWGuid(chr.GUID);
+            //objectMgr.getPlayerObject().SetPlayer(chr);
             StartHeartbeat();
 
             movementMgr.Start();

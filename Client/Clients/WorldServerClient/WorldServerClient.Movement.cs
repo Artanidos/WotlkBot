@@ -25,7 +25,7 @@ namespace WotlkClient.Clients
         public void MoveForward()
         {
             PacketOut packet = new PacketOut(WorldServerOpCode.MSG_MOVE_START_FORWARD);
-            AppendPackedGuid(objectMgr.getPlayerObject().Guid.GetOldGuid(), packet);
+            AppendPackedGuid(player.Guid.GetOldGuid(), packet);
             // add new position
             Send(packet);
         }
@@ -33,7 +33,7 @@ namespace WotlkClient.Clients
         public void MoveStop()
         {
             PacketOut packet = new PacketOut(WorldServerOpCode.MSG_MOVE_STOP);
-            AppendPackedGuid(objectMgr.getPlayerObject().Guid.GetOldGuid(), packet);
+            AppendPackedGuid(player.Guid.GetOldGuid(), packet);
             // add new position
             Send(packet);
         }
@@ -65,16 +65,30 @@ namespace WotlkClient.Clients
         [PacketHandlerAtribute(WorldServerOpCode.MSG_MOVE_HEARTBEAT)]
         public void HandleAnyMove(PacketIn packet)
         {
+            Object obj;
+            WoWGuid updateGuid = new WoWGuid(UnpackGuid(packet));
+            if (ObjectMgr.GetInstance().objectExists(updateGuid))
+            {
+                obj = ObjectMgr.GetInstance().getObject(updateGuid);
+            }
+            else
+            {
+                obj = new Object(updateGuid);
+                ObjectMgr.GetInstance().addObject(obj);
+            }
+            ReadMovementInfoLegacy(packet, obj);
+            /*
             byte mask = packet.ReadByte();
 
             WoWGuid guid = new WoWGuid(mask, packet.ReadBytes(WoWGuid.BitCount8(mask)));
 
-            Object obj = objectMgr.getObject(guid);
+            Object obj = ObjectMgr.GetInstance().getObject(guid);
             if (obj != null)
             {
                     packet.ReadBytes(9);
                     obj.Position= new Coordinate(packet.ReadFloat(), packet.ReadFloat(), packet.ReadFloat(), packet.ReadFloat());
             }
+            */
         }
 
         [PacketHandlerAtribute(WorldServerOpCode.SMSG_MONSTER_MOVE)]
@@ -84,7 +98,7 @@ namespace WotlkClient.Clients
 
             WoWGuid guid = new WoWGuid(mask, packet.ReadBytes(WoWGuid.BitCount8(mask)));
 
-            Object obj = objectMgr.getObject(guid);
+            Object obj = ObjectMgr.GetInstance().getObject(guid);
             if (obj != null)
             {
                 System.Console.WriteLine("MONSTER_MOVE " + obj.Name);
@@ -98,17 +112,17 @@ namespace WotlkClient.Clients
 
         void Heartbeat(object source, ElapsedEventArgs e)
         {
-            if (objectMgr.getPlayerObject().Position == null)
+            if (player == null || player.Position == null)
                 return;
 
             PacketOut packet = new PacketOut(WorldServerOpCode.MSG_MOVE_HEARTBEAT);
             packet.Write(movementMgr.Flag.MoveFlags);
             packet.Write((byte)0);
             packet.Write((UInt32)MM_GetTime());
-            packet.Write((float)objectMgr.getPlayerObject().Position.X);
-            packet.Write((float)objectMgr.getPlayerObject().Position.Y);
-            packet.Write((float)objectMgr.getPlayerObject().Position.Z);
-            packet.Write((float)objectMgr.getPlayerObject().Position.O);
+            packet.Write((float)player.Position.X);
+            packet.Write((float)player.Position.Y);
+            packet.Write((float)player.Position.Z);
+            packet.Write((float)player.Position.O);
             packet.Write((UInt32)0);
             Send(packet);
         }

@@ -24,17 +24,21 @@ namespace WotlkClient.Clients
         UInt32 lastUpdateTime;
 
         WorldServerClient client;
-        ObjectMgr objectMgr;
         MovementMgr movementMgr;
         Boolean isFighting = false;
         string prefix;
+        Object player = null;
 
         public CombatMgr(WorldServerClient Client, string _prefix)
         {
-            objectMgr = Client.objectMgr;
             movementMgr = Client.movementMgr;
             client = Client;
             prefix = _prefix;
+        }
+
+        public void SetPlayer(Object obj)
+        {
+            player = obj;
         }
 
         public void Start()
@@ -70,7 +74,7 @@ namespace WotlkClient.Clients
                     if (Targets.Count > 0)
                     {
                         Object target = Targets.First();
-                        float dist = TerrainMgr.CalculateDistance(objectMgr.getPlayerObject().Position, target.Position);
+                        float dist = TerrainMgr.CalculateDistance(player.Position, target.Position);
                         if (dist > 1)
                         {
                             movementMgr.Waypoints.Add(target.Position);
