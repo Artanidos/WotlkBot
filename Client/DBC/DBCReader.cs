@@ -12,6 +12,9 @@ namespace WotlkClient.Shared
         private byte[][][] data;
         private byte[] stringTable;
         protected WDBC_header wdbc_header = new WDBC_header();
+        private static object _lockObj = new object();
+        private string prefix;
+
         public uint Records
         {
             get
@@ -28,9 +31,10 @@ namespace WotlkClient.Shared
         }
 
 
-        public DBCFile(String filename)
+        public DBCFile(String filename, string prefix)
         {
             loadFile(filename);
+            this.prefix = prefix;
         }
 
         public byte[][] getRecord(uint record)
@@ -81,52 +85,68 @@ namespace WotlkClient.Shared
 
         private void loadFile(String name)
         {
-            FileStream st = new FileStream(@"dbc\"+name+"", FileMode.Open);
-            BinaryReader bin = new BinaryReader(st);
-
-            // Read in Chunk Header Name
-            BlizChunkHeader tempHeader = new BlizChunkHeader(bin.ReadChars(4), 0);
-
-            // No BlizFileHeader Flip() for DBC files
-
-            // Validate DBC Header
-            if (!tempHeader.Is("WDBC"))
-                throw new Exception("Not a DBC file.");
-
-            wdbc_header = new WDBC_header();
-
-            // Read in DBC header (the rest of it)
-            wdbc_header.nRecords = bin.ReadUInt32();
-            wdbc_header.nFields = bin.ReadUInt32();
-            wdbc_header.recordSize = bin.ReadUInt32();
-            wdbc_header.stringSize = bin.ReadUInt32();
-
-
-            if (wdbc_header.nFields * 4 != wdbc_header.recordSize)
-                throw new Exception("Non-standard DBC file.");
-
-
-            // Read in each record
-            data = new byte[wdbc_header.nRecords][][];
-
-            for (int i = 0; i < wdbc_header.nRecords; i++)
+            lock (_lockObj)
             {
-                data[i] = new byte[wdbc_header.nFields][];
-
-                for (int j = 0; j < wdbc_header.nFields; j++)
+                FileStream st = null;
+                try
                 {
-                    data[i][j] = bin.ReadBytes(4);
+                    st = new FileStream(@"dbc\" + name + "", FileMode.Open);
+                    BinaryReader bin = new BinaryReader(st);
+
+                    // Read in Chunk Header Name
+                    BlizChunkHeader tempHeader = new BlizChunkHeader(bin.ReadChars(4), 0);
+
+                    // No BlizFileHeader Flip() for DBC files
+
+                    // Validate DBC Header
+                    if (!tempHeader.Is("WDBC"))
+                        throw new Exception("Not a DBC file.");
+
+                    wdbc_header = new WDBC_header();
+
+                    // Read in DBC header (the rest of it)
+                    wdbc_header.nRecords = bin.ReadUInt32();
+                    wdbc_header.nFields = bin.ReadUInt32();
+                    wdbc_header.recordSize = bin.ReadUInt32();
+                    wdbc_header.stringSize = bin.ReadUInt32();
+
+
+                    if (wdbc_header.nFields * 4 != wdbc_header.recordSize)
+                        throw new Exception("Non-standard DBC file.");
+
+
+                    // Read in each record
+                    data = new byte[wdbc_header.nRecords][][];
+
+                    for (int i = 0; i < wdbc_header.nRecords; i++)
+                    {
+                        data[i] = new byte[wdbc_header.nFields][];
+
+                        for (int j = 0; j < wdbc_header.nFields; j++)
+                        {
+                            data[i][j] = bin.ReadBytes(4);
+                        }
+                    }
+
+
+                    // Read in string table
+                    if (wdbc_header.stringSize > 0)
+                    {
+                        stringTable = bin.ReadBytes((int)wdbc_header.stringSize);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Log.WriteLine(LogType.Error, "Exception Occured", prefix);
+                    Log.WriteLine(LogType.Error, "Message: {0}", prefix, ex.Message);
+                    Log.WriteLine(LogType.Error, "Stacktrace: {0}", prefix, ex.StackTrace);
+                }
+                finally
+                {
+                    if (st != null)
+                        st.Close();
                 }
             }
-
-
-            // Read in string table
-            if (wdbc_header.stringSize > 0)
-            {
-                stringTable = bin.ReadBytes((int)wdbc_header.stringSize);
-            }
-
-
         }
 
         // DBC File Header Structure

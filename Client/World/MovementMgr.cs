@@ -27,11 +27,13 @@ namespace WotlkClient.Clients
         UInt32 lastUpdateTime;
         TerrainMgr terrainMgr;
         string prefix;
+        WorldServerClient worldServerClient;
 
         private Object player;
 
         public MovementMgr(WorldServerClient Client, string _prefix)
         {
+            worldServerClient = Client;
             terrainMgr = Client.terrainMgr;
             prefix = _prefix;
         }
@@ -90,11 +92,13 @@ namespace WotlkClient.Clients
                                 if (dist > 1)
                                 {
                                     Flag.SetMoveFlag(MovementFlags.MOVEMENTFLAG_FORWARD);
-                                    UpdatePosition(diff);
                                     lastUpdateTime = timeNow;
+                                    if (UpdatePosition(diff))
+                                        worldServerClient.MoveForward(player.Position, timeNow);
                                 }
                                 else
                                 {
+                                    worldServerClient.MoveStop(player.Position, timeNow);
                                     Waypoints.Remove(Waypoint);
                                 }
                             }
@@ -117,23 +121,24 @@ namespace WotlkClient.Clients
                     Log.WriteLine(LogType.Error, "Message: {0}", prefix, ex.Message);
                     Log.WriteLine(LogType.Error, "Stacktrace: {0}", prefix, ex.StackTrace);
                 }
+                Thread.Sleep(50);
             }
         }
 
 
-        public void UpdatePosition(UInt32 diff)
+        public bool UpdatePosition(UInt32 diff)
         {
             double h; double speed;
 
             if (player == null)
-                return;
+                return false;
 
             if (Flag.IsMoveFlagSet(MovementFlags.MOVEMENTFLAG_FORWARD))
             {
                 speed = 7.0;
             }
             else
-                return;
+                return false;
 
             float predictedDX = 0;
             float predictedDY = 0;
@@ -163,11 +168,14 @@ namespace WotlkClient.Clients
 
                 Coordinate expected = new Coordinate(loc.X + predictedDX, loc.Y + predictedDY, player.Position.Z, player.Position.O);
                 expected = terrainMgr.getZ(expected);
+                if (player.Position.Equals(expected))
+                    return false;
                 player.Position = expected;
-
+                
             }
 
             oldLocation = loc;
+            return true;
         }
 
         public float CalculateDistance(Coordinate c1)

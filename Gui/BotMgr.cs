@@ -25,10 +25,9 @@ namespace WotlkBotGui
                 loginClient = new LogonServerClient(host, port, bot.AccountName, bot.Password, callback);
                 loginClient.Connect();
             }
-            
             catch (Exception ex)
             {
-                System.Console.WriteLine("An error occured: {0}", ex.Message);
+                Console.WriteLine("An error occured: {0}", ex.Message);
             }
 
             while (!shouldStop)

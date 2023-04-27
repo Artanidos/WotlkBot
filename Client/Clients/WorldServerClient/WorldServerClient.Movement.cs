@@ -22,20 +22,36 @@ namespace WotlkClient.Clients
         // 00 00 00 00 - 00 00 - 14 38 5f 17 - 43 83 0b c6 - 5f 86 02 c3 - 80 25 a4 42 - 3d d8 93 40 - 00 00 00 00
         // 01 = MOVEMENTFLAG_FORWARD
         // 00 = MOVEMENTFLAG_NONE
-        public void MoveForward()
+        public void MoveForward(Coordinate position, uint time)
         {
             PacketOut packet = new PacketOut(WorldServerOpCode.MSG_MOVE_START_FORWARD);
             AppendPackedGuid(player.Guid.GetOldGuid(), packet);
-            // add new position
+            packet.Write((UInt32)0);    // flags
+            packet.Write((UInt16)0);    // flags2
+            packet.Write((UInt32)time);
+            packet.Write(position.X);
+            packet.Write(position.Y);
+            packet.Write(position.Z);
+            packet.Write(position.O);
+            packet.Write((UInt32)0);    // falltime  
             Send(packet);
+            Console.WriteLine("move forward " + player.Name + ", " + position.ToString());
         }
 
-        public void MoveStop()
+        public void MoveStop(Coordinate position, uint time)
         {
             PacketOut packet = new PacketOut(WorldServerOpCode.MSG_MOVE_STOP);
             AppendPackedGuid(player.Guid.GetOldGuid(), packet);
-            // add new position
+            packet.Write((UInt32)0);    // flags
+            packet.Write((UInt16)0);    // flags2
+            packet.Write((UInt32)time);
+            packet.Write(position.X);
+            packet.Write(position.Y);
+            packet.Write(position.Z);
+            packet.Write(position.O);
+            packet.Write((UInt32)0);    // falltime 
             Send(packet);
+            Console.WriteLine("move stop " + player.Name);
         }
 
 

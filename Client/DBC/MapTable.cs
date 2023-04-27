@@ -7,8 +7,8 @@ namespace WotlkClient.Shared
 {
     class MapTable : DBCFile
     {
-        public MapTable()
-            : base(@"Map.dbc")
+        public MapTable(string prefix)
+            : base(@"Map.dbc", prefix)
         {
         }
 

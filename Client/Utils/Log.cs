@@ -22,48 +22,42 @@ namespace WotlkClient.Shared
                         if (type == LogType.Packet)
                         {
                             StreamWriter packetFile = File.AppendText("logs/" + prefix + "_packet_log.txt");
-                            if (parameters.Length > 0)
-                                packetFile.WriteLine(parameters[0].ToString());
+                            packetFile.WriteLine(msg);
                             packetFile.Flush();
                             packetFile.Close();
                         }
                         else if (type == LogType.Network)
                         {
                             StreamWriter packetFile = File.AppendText("logs/" + prefix + "_network_log.txt");
-                            if (parameters.Length > 0)
-                                packetFile.WriteLine(parameters[0].ToString());
+                            packetFile.WriteLine(msg);
                             packetFile.Flush();
                             packetFile.Close();
                         }
                         else if (type == LogType.Error)
                         {
                             StreamWriter packetFile = File.AppendText("logs/" + prefix + "_error_log.txt");
-                            if (parameters.Length > 0)
-                                packetFile.WriteLine(parameters[0].ToString());
+                            packetFile.WriteLine(msg);
                             packetFile.Flush();
                             packetFile.Close();
                         }
                         else if (type == LogType.Debug)
                         {
                             StreamWriter packetFile = File.AppendText("logs/" + prefix + "_debug_log.txt");
-                            if (parameters.Length > 0)
-                                packetFile.WriteLine(parameters[0].ToString());
+                            packetFile.WriteLine(msg);
                             packetFile.Flush();
                             packetFile.Close();
                         }
                         else if (type == LogType.Chat)
                         {
                             StreamWriter packetFile = File.AppendText("logs/" + prefix + "_chat_log.txt");
-                            if (parameters.Length > 0)
-                                packetFile.WriteLine(parameters[0].ToString());
+                            packetFile.WriteLine(msg);
                             packetFile.Flush();
                             packetFile.Close();
                         }
                         else if(type == LogType.Normal)
                         {
                             StreamWriter packetFile = File.AppendText("logs/" + prefix + "_normal_log.txt");
-                            if (parameters.Length > 0)
-                                packetFile.WriteLine(parameters[0].ToString());
+                            packetFile.WriteLine(msg);
                             packetFile.Flush();
                             packetFile.Close();
                         }

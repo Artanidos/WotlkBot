@@ -23,7 +23,7 @@ namespace WotlkClient.Clients
         CharEnumCompletedCallBack charEnumCompletedCallBack;
         CharLoginCompletedCallBack charLoginCompletedCallBack;
         InviteCallBack inviteCallBack;
-
+        private UInt32 packetNumber = 0;
         private UInt32 ServerSeed;
         private UInt32 ClientSeed;
         private Random random = new Random();
@@ -103,6 +103,7 @@ namespace WotlkClient.Clients
             IPAddress WSAddr = Dns.GetHostAddresses(address[0])[0];
             int WSPort = Int32.Parse(address[1]);
             IPEndPoint ep = new IPEndPoint(WSAddr, WSPort);
+            Console.WriteLine("port " + WSPort.ToString());
             
             try
             {
@@ -173,13 +174,13 @@ namespace WotlkClient.Clients
                 Packet[1] = (byte)(Length & 0xff);
                 Data.CopyTo(Packet, 2);
                 mCrypt.Encrypt(Packet, 0, 6);
-
-                Log.WriteLine(LogType.Packet,"{0}", prefix, packet.ToHex());
+                packetNumber++;
+                Log.WriteLine(LogType.Packet,"{0}", prefix, packet.ToHex(packetNumber));
                 mSocket.Send(Packet);
             }
             catch(SocketException se)
             {
-                Log.WriteLine(LogType.Error, "Exception Occured", prefix);
+                Log.WriteLine(LogType.Error, "Exception Occured in packet {0}", prefix, packetNumber);
                 Log.WriteLine(LogType.Error, "Message: {0}", prefix, se.Message);
                 Log.WriteLine(LogType.Error, "Stacktrace: {0}", prefix, se.StackTrace);
                 HardDisconnect();
@@ -190,7 +191,6 @@ namespace WotlkClient.Clients
                 Log.WriteLine(LogType.Error, "Exception Occured", prefix);
                 Log.WriteLine(LogType.Error, "Message: {0}", prefix, ex.Message);
                 Log.WriteLine(LogType.Error, "Stacktrace: {0}", prefix, ex.StackTrace);
-                HardDisconnect();
             }
         }
 

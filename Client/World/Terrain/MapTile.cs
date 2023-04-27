@@ -17,11 +17,6 @@ namespace WotlkClient.Terrain
             TileZ = z;
         }
 
-        //public void getZ(Coordinate c)
-        //{
-        //    c.Z = getZ(c.X, c.Y);
-        //}
-
         public float getZ(float x, float y)
         {
             float diff = 500.0f / 15.0f;

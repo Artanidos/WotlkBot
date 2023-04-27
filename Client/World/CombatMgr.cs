@@ -101,6 +101,7 @@ namespace WotlkClient.Clients
                     Log.WriteLine(LogType.Error, "Message: {0}", prefix, ex.Message);
                     Log.WriteLine(LogType.Error, "Stacktrace: {0}", prefix, ex.StackTrace);
                 }
+                Thread.Sleep(50);
             }
         }
     }

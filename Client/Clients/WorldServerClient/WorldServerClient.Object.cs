@@ -58,8 +58,6 @@ namespace WotlkClient.Clients
                         {
                             getObject = new Object(updateGuid);
                             ObjectMgr.GetInstance().addObject(getObject);
-                            if (getObject.Name != null)
-                                Console.WriteLine("updating " + getObject.Name);
                         }
                         //HandleUpdateObjectFieldBlock(packet, getObject, updateGuid.GetTypeId());
                         ReadValuesUpdateBlock(packet, updateGuid.GetTypeId());
@@ -78,42 +76,12 @@ namespace WotlkClient.Clients
                         {
                             obj = new Object(updateGuid);
                             ObjectMgr.GetInstance().addObject(obj);
-                            if (type == UpdateType.CreateSelf && updateGuid.GetTypeId() == ObjectType.Player)
-                            {
-                                player = obj;
-                                movementMgr.SetPlayer(player);
-                                combatMgr.SetPlayer(player);
-                                Console.WriteLine("Player added " + updateGuid.ToString());
-                            }
-                            if (obj.Name != null)
-                                Console.WriteLine("updating " + obj.Name);
                         }
                         ReadMovementUpdateBlock(packet, obj);
                         ReadValuesUpdateBlock(packet, updateGuid.GetTypeId());
                         ObjectMgr.GetInstance().updateObject(obj);
                         break;
                         
-                        /*
-                        updateGuid = new WoWGuid(UnpackGuid(packet));
-                        //Console.WriteLine("HandleObjectUpdate create " + updateGuid.ToString());
-
-                        updateId = packet.ReadByte();
-
-                        fCount = GeUpdateFieldsCount(updateId);
-
-                        //if (objectMgr.objectExists(updateGuid))
-                        //    objectMgr.delObject(updateGuid);
-
-                        Object newObject = new Object(updateGuid);
-                        newObject.Fields = new UInt32[2000];
-                        //objectMgr.addObject(newObject);
-                        HandleUpdateMovementBlock(packet, newObject);
-                        HandleUpdateObjectFieldBlock(packet, newObject, updateGuid.GetTypeId());
-                        //objectMgr.updateObject(newObject);
-                        Log.WriteLine(LogType.Normal, "Handling Creation of object: {0}", prefix, newObject.Guid.ToString());
-                        // 138 remaining
-                        break;
-                        */
                     case UpdateType.OutOfRange: // checked
                         fCount = packet.ReadUInt32();
                         for (int j = 0; j < fCount; j++)
@@ -126,16 +94,7 @@ namespace WotlkClient.Clients
                                 ObjectMgr.GetInstance().delObject(guid);
                         }
                         break;
-                    case UpdateType.Movement:
-                        {
-                            updateGuid = new WoWGuid(UnpackGuid(packet));
-                            Console.WriteLine("movement " + updateGuid.ToString());
-                            Object mobj = ObjectMgr.GetInstance().getObject(updateGuid);
-                            HandleUpdateMovementBlock(packet, mobj);
-                            ObjectMgr.GetInstance().updateObject(mobj);
-
-                            break;
-                        }
+                    
                     case UpdateType.NearObjects:
                         Console.WriteLine("near objects ");
                         break;
@@ -225,9 +184,12 @@ namespace WotlkClient.Clients
             packet.ReadByte();
             UpdateFlag flags = (UpdateFlag)packet.ReadUInt16();
 
+
             if (flags.HasAnyFlag(UpdateFlag.Self))
             {
-                //packet.GetReceivedTime();
+                player = obj;
+                movementMgr.SetPlayer(player);
+                combatMgr.SetPlayer(player);
             }
 
             if (flags.HasAnyFlag(UpdateFlag.Living))
@@ -344,188 +306,6 @@ namespace WotlkClient.Clients
             }
         }
 
-        public void HandleUpdateMovementBlock(PacketIn packet, Object newObject)
-        {
-            // TODO user the data
-
-            UInt16 flags = packet.ReadUInt16();
-
-
-            if ((flags & 0x20) >= 1)
-            {
-                UInt32 flags2 = packet.ReadUInt32();
-                UInt16 unk1 = packet.ReadUInt16();
-                UInt32 unk2 = packet.ReadUInt32();
-                newObject.Position = new Coordinate(packet.ReadFloat(), packet.ReadFloat(), packet.ReadFloat(), packet.ReadFloat());
-
-                if ((flags2 & 0x200) >= 1)
-                {
-                    packet.ReadBytes(21); //transporter
-                }
-
-                if (((flags2 & 0x2200000) >= 1) || ((unk1 & 0x20) >= 1))
-                {
-                    packet.ReadBytes(4); // pitch
-                }
-
-                packet.ReadBytes(4); //lastfalltime
-
-                if ((flags2 & 0x1000) >= 1)
-                {
-                    packet.ReadBytes(16); // skip 4 floats
-                }
-
-                if ((flags2 & 0x4000000) >= 1)
-                {
-                    packet.ReadBytes(4); // skip 1 float
-                }
-
-                packet.ReadBytes(36); // all of speeds 9 * 4
-
-                if ((flags2 & 0x8000000) >= 1) //spline ;/   OrientationInversed
-                {
-                    UInt32 splineFlags = packet.ReadUInt32();
-
-                    if ((splineFlags & 0x00020000) >= 1)  // final angle
-                    {
-                        packet.ReadBytes(4); // skip 1 float
-                    }
-                    else
-                    {
-                        if ((splineFlags & 0x00010000) >= 1)    // final target
-                        {
-                            packet.ReadBytes(4); // skip 1 float
-                        }
-                        else if ((splineFlags & 0x00008000) >= 1) // final point
-                        {
-                            packet.ReadBytes(12); // skip 3 float
-                        }
-                    }
-
-                    packet.ReadBytes(12); // 3 x int32  timepassed, duration, getid
-                    packet.ReadBytes(12); // skip 3 floats
-                    packet.ReadInt32();  // effect_start_time
-
-                    UInt32 splineCount = packet.ReadUInt32();
-
-                    for (UInt32 j = 0; j < splineCount; j++)
-                    {
-                        packet.ReadBytes(12); // skip 3 float
-                    }
-                    packet.ReadByte();  // spline node
-                    packet.ReadBytes(12); // Vector3 3 x float
-
-                }
-            }
-
-            else if ((flags & 0x100) >= 1) // UPDATEFLAG_POSITION
-            {
-                UInt64 transportGuid = UnpackGuid(packet);
-                float x = packet.ReadFloat();
-                float y = packet.ReadFloat();
-                float z = packet.ReadFloat();
-                if (transportGuid != 0)
-                {
-                    float offsetx = packet.ReadFloat();
-                    float offsety = packet.ReadFloat();
-                    float offsetz = packet.ReadFloat();
-                }
-                else
-                {
-                    packet.ReadFloat();
-                    packet.ReadFloat();
-                    packet.ReadFloat();
-                }
-                float o = packet.ReadFloat();
-                packet.ReadFloat();
-            }
-            else if ((flags & 0x40) >= 1)  // UPDATEFLAG_STATIONARY_POSITION
-            {
-                newObject.Position = new Coordinate(packet.ReadFloat(), packet.ReadFloat(), packet.ReadFloat(), packet.ReadFloat());
-            }
-
-            if ((flags & 0x8) >= 1) // UPDATEFLAG_UNKNOWN
-            {
-                packet.ReadBytes(4);
-            }
-
-            if ((flags & 0x10) >= 1) // UPDATEFLAG_LOWGUID
-            {
-                packet.ReadBytes(4);
-            }
-
-            if ((flags & 0x04) >= 1) // UPDATEFLAG_HAS_TARGET
-            {
-                UInt64 victimGuid = UnpackGuid(packet);
-            }
-
-            if ((flags & 0x2) >= 1) // UPDATEFLAG_TRANSPORT
-            {
-                packet.ReadBytes(4);
-            }
-
-            if ((flags & 0x80) >= 1) // UPDATEFLAG_VEHICLE
-            {
-                packet.ReadBytes(8);
-            }
-
-            if ((flags & 0x200) >= 1) // UPDATEFLAG_ROTATION
-            {
-                //attention maybe packt ToGameObject()->GetPackedLocalRotation()
-                packet.ReadBytes(8);
-            }
-        }
-
-        public void HandleUpdateObjectFieldBlock(PacketIn packet, Object newObject, ObjectType type)
-        {
-            uint lenght = packet.ReadByte();
-
-            UpdateMask UpdateMask = new UpdateMask();
-            UpdateMask.SetCount((ushort)(lenght));
-            UpdateMask.SetMask(packet.ReadBytes((int)lenght * 4), (ushort)lenght);
-            for (int i = 0; i < UpdateMask.GetCount(); i++)
-            {
-                if (!UpdateMask.GetBit((ushort)i))
-                {
-                    UInt32 val = packet.ReadUInt32();
-                    newObject.SetField(i, val);
-                    Log.WriteLine(LogType.Normal, "Update Field: {0} = {1}", prefix, (UpdateFields)i, val);
-                }
-            }
-
-            UpdateFieldInfo fieldInfo = null;
-
-            switch (type)
-            {
-                case ObjectType.Container:
-                    break;
-                case ObjectType.Item:
-                    break;
-                case ObjectType.Player:
-                    break;
-                case ObjectType.Unit:
-                    break;
-                case ObjectType.GameObject:
-                    break;
-                case ObjectType.DynamicObject:
-                    break;
-                case ObjectType.Corpse:
-                    break;
-                case ObjectType.AreaTrigger:
-                    break;
-            }
-        }
-
-        /*
-        [PacketHandlerAtribute(WorldServerOpCode.SMSG_DESTROY_OBJECT)]
-        public void DestroyObject(PacketIn packet)
-        {
-            WoWGuid guid = new WoWGuid(packet.ReadUInt64());
-            objectMgr.delObject(guid);
-
-        }
-         * */
-
         public uint GeUpdateFieldsCount(uint updateId)
         {
             switch ((ObjectType)updateId)
@@ -639,19 +419,6 @@ namespace WotlkClient.Clients
                 obj.Name = name;
                 ObjectMgr.GetInstance().addObject(obj);
                 Console.WriteLine("Name inserted for " + name);
-
-
-                /* Process chat message if we looked them up now 
-                for (int i = 0; i < ChatQueued.Count; i++)
-                {
-                    ChatQueue message = (ChatQueue)ChatQueued[i];
-                    if (message.GUID.GetOldGuid() == guid.GetOldGuid())
-                    {
-                        Log.WriteLine(LogType.Chat, "[{1}] {0}", mUsername, message.Message, name);
-                        ChatQueued.Remove(message);
-                    }
-                }
-                */
             }
         }
 

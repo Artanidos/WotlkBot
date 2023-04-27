@@ -27,11 +27,11 @@ namespace WotlkClient.Clients
             Console.WriteLine("bot " + cmd);
             if (cmd == "move forward")
             {
-                MoveForward();
+                //MoveForward();
             }
             else if(cmd == "move stop")
             {
-                MoveStop();
+                //MoveStop();
             }
             else if(cmd == "heal me")
             {
@@ -48,9 +48,10 @@ namespace WotlkClient.Clients
                 {
                     if (ObjectMgr.GetInstance().getObject(fguid).Position != null && player != null && player.Position != null)
                     {
+                        Console.WriteLine("follow");
                         movementMgr.Waypoints.Add(ObjectMgr.GetInstance().getObject(fguid).Position);
                         movementMgr.Start();
-                        Console.WriteLine("follow");
+                        
                     }
                 }
             }

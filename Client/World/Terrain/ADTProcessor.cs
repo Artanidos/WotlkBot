@@ -21,14 +21,31 @@ namespace WotlkClient.Terrain
         protected MCNK[][] mapChunkTable;   // 16x16 MapChunk Table
         private FileStream adtStream;
         string prefix;
- 
+        private static object _lockObj = new object();
+
         // ** Removed because this constructor isn't neccessary.
         public ADT(String mapname, int x, int z, string _prefix)
         {
-            string filename = String.Format(@"ADT\{0}\{0}_{1}_{2}.adt", mapname, x, z);
-            adtStream = new FileStream(filename, FileMode.Open);
-            parseFile();
-            prefix = _prefix;
+            lock (_lockObj)
+            {
+                try
+                {
+                    string filename = String.Format(@"maps\{0}\{0}_{1}_{2}.adt", mapname, x, z);
+                    adtStream = new FileStream(filename, FileMode.Open);
+                    parseFile();
+
+                    prefix = _prefix;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("An error occured " + ex.Message);
+                }
+                finally
+                {
+                    if(adtStream != null)
+                        adtStream.Close();
+                }
+            }
         }
 
         private void parseFile()
@@ -198,6 +215,11 @@ namespace WotlkClient.Terrain
                     continue;
                 }
 
+                if (tempHeader.Is("MH2O"))
+                {
+                    continue;
+                }
+
                 // If we're still down here, we got a problem
                 throw new Exception(String.Format("ADTFile: Woah. Got a header of {0}. Don't know how to deal with this, bailing out.", tempHeader.ToString()));
             }
@@ -216,8 +238,6 @@ namespace WotlkClient.Terrain
                     mapChunkTable[i][j] = parseMapChunk(ms, mcin_array[index].MCNK_offset, mcin_array[index].MCNK_size);
                 }
             }
-
-            
         }
 
         // Read in an MCNK chunk at supplied offset.
