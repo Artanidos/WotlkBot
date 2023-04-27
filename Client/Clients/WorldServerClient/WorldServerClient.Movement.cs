@@ -133,7 +133,7 @@ namespace WotlkClient.Clients
 
             PacketOut packet = new PacketOut(WorldServerOpCode.MSG_MOVE_HEARTBEAT);
             packet.Write(movementMgr.Flag.MoveFlags);
-            packet.Write((byte)0);
+            packet.Write((UInt16)0);
             packet.Write((UInt32)MM_GetTime());
             packet.Write((float)player.Position.X);
             packet.Write((float)player.Position.Y);

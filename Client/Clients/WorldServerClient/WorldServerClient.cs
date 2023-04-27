@@ -19,6 +19,7 @@ namespace WotlkClient.Clients
 
     public partial class WorldServerClient
     {
+        private static object _lockObj = new object();
         AuthCompletedCallBack authCompletedCallBack;
         CharEnumCompletedCallBack charEnumCompletedCallBack;
         CharLoginCompletedCallBack charLoginCompletedCallBack;
@@ -103,7 +104,6 @@ namespace WotlkClient.Clients
             IPAddress WSAddr = Dns.GetHostAddresses(address[0])[0];
             int WSPort = Int32.Parse(address[1]);
             IPEndPoint ep = new IPEndPoint(WSAddr, WSPort);
-            Console.WriteLine("port " + WSPort.ToString());
             
             try
             {
@@ -160,37 +160,40 @@ namespace WotlkClient.Clients
 
         public void Send(PacketOut packet)
         {
-            try
+            lock (_lockObj)
             {
-                if (!Connected)
-                    return;
-                Log.WriteLine(LogType.Network, "Sending packet: {0}", prefix, packet.packetId);
+                try
+                {
+                    if (!Connected)
+                        return;
+                    Log.WriteLine(LogType.Network, "Sending packet: {0}", prefix, packet.packetId);
 
-                Byte[] Data = packet.ToArray();
+                    Byte[] Data = packet.ToArray();
 
-                int Length = Data.Length;
-                byte[] Packet = new byte[2 + Length];
-                Packet[0] = (byte)(Length >> 8);
-                Packet[1] = (byte)(Length & 0xff);
-                Data.CopyTo(Packet, 2);
-                mCrypt.Encrypt(Packet, 0, 6);
-                packetNumber++;
-                Log.WriteLine(LogType.Packet,"{0}", prefix, packet.ToHex(packetNumber));
-                mSocket.Send(Packet);
-            }
-            catch(SocketException se)
-            {
-                Log.WriteLine(LogType.Error, "Exception Occured in packet {0}", prefix, packetNumber);
-                Log.WriteLine(LogType.Error, "Message: {0}", prefix, se.Message);
-                Log.WriteLine(LogType.Error, "Stacktrace: {0}", prefix, se.StackTrace);
-                HardDisconnect();
-                System.Console.WriteLine("Disconnected from server with " + mUsername);
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine(LogType.Error, "Exception Occured", prefix);
-                Log.WriteLine(LogType.Error, "Message: {0}", prefix, ex.Message);
-                Log.WriteLine(LogType.Error, "Stacktrace: {0}", prefix, ex.StackTrace);
+                    int Length = Data.Length;
+                    byte[] Packet = new byte[2 + Length];
+                    Packet[0] = (byte)(Length >> 8);
+                    Packet[1] = (byte)(Length & 0xff);
+                    Data.CopyTo(Packet, 2);
+                    mCrypt.Encrypt(Packet, 0, 6);
+                    packetNumber++;
+                    Log.WriteLine(LogType.Packet, "{0}", prefix, packet.ToHex(packetNumber));
+                    mSocket.Send(Packet);
+                }
+                catch (SocketException se)
+                {
+                    Log.WriteLine(LogType.Error, "Exception Occured in packet {0}", prefix, packetNumber);
+                    Log.WriteLine(LogType.Error, "Message: {0}", prefix, se.Message);
+                    Log.WriteLine(LogType.Error, "Stacktrace: {0}", prefix, se.StackTrace);
+                    HardDisconnect();
+                    System.Console.WriteLine("Disconnected from server with " + mUsername);
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogType.Error, "Exception Occured", prefix);
+                    Log.WriteLine(LogType.Error, "Message: {0}", prefix, ex.Message);
+                    Log.WriteLine(LogType.Error, "Stacktrace: {0}", prefix, ex.StackTrace);
+                }
             }
         }
 
