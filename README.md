@@ -41,7 +41,7 @@ Developing this library could also lead to the possibility to create a new MMORP
 - And whatever you wish...
 
 ## Porting to C++
-This project will be ported to C++.  
+This project will be ported to C++ so that the library can be used for example with Unreal Engine, Python and on Android. 
 See: https://github.com/CrowdWare/AzerothClient
 
 ## Base
