@@ -40,6 +40,9 @@ Developing this library could also lead to the possibility to create a new MMORP
 - Bot shall roll for items and equip items
 - And whatever you wish...
 
+## Porting to C++
+This project will be ported to C++.  
+See: https://github.com/CrowdWare/AzerothClient
 
 ## Base
 This project is based on https://github.com/justMaku/mClient from Michał Kałużny.
