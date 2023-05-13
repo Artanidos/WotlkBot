@@ -7,7 +7,7 @@ This software shall only be used for your own private server like AzerothCore to
 It can also be used on other private servers, where botting is allowed. Maybe Solocraft could allow to use it, because they have also party-bots implemented.
 
 ## Motivation
-I am playing Wow now since the first monsths. Since Blizzard has sold Wow to Activision, the retail version does not make much fun anymore, but the old version 3.3.5 Wrath of the Lich King was a very good extension.  
+I am playing Wow now since the first months. Since Blizzard has sold Wow to Activision, the retail version does not make much fun anymore, but the old version 3.3.5 Wrath of the Lich King was a very good extension.  
 - 10 man raids where posible.  
 - The dungeon finder has helped a lot to make many heroic dungeons every day.  
 - The talent-tree was in god shape.  
